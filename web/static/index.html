@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>电动车电池寿命预测</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="input-pane" aria-label="预测输入">
+        <div class="title-row">
+          <div>
+            <p class="eyebrow">CALB + XGBoost</p>
+            <h1>电动车电池寿命预测</h1>
+          </div>
+          <div class="model-pill" id="modelStatus">模型检查中</div>
+        </div>
+
+        <form id="predictForm">
+          <div class="form-grid">
+            <label>
+              电池类型
+              <select name="battery_type">
+                <option value="LFP">磷酸铁锂</option>
+                <option value="NCM">三元锂</option>
+                <option value="Lead-acid">铅酸</option>
+                <option value="Unknown">不确定</option>
+              </select>
+            </label>
+
+            <label>
+              已使用月份
+              <input name="battery_age_months" type="number" min="0" max="240" step="1" value="18" />
+            </label>
+
+            <label>
+              电压
+              <select name="voltage">
+                <option value="48">48V</option>
+                <option value="60">60V</option>
+                <option value="72">72V</option>
+              </select>
+            </label>
+
+            <label>
+              容量 Ah
+              <select name="capacity_ah">
+                <option value="12">12Ah</option>
+                <option value="20" selected>20Ah</option>
+                <option value="24">24Ah</option>
+                <option value="32">32Ah</option>
+                <option value="40">40Ah</option>
+              </select>
+            </label>
+
+            <label>
+              通常从多少电开始充
+              <select name="charge_start_soc">
+                <option value="10">10%</option>
+                <option value="20" selected>20%</option>
+                <option value="30">30%</option>
+                <option value="40">40%</option>
+                <option value="50">50%</option>
+              </select>
+            </label>
+
+            <label>
+              通常充到多少电
+              <select name="charge_end_soc">
+                <option value="80">80%</option>
+                <option value="90" selected>90%</option>
+                <option value="100">100%</option>
+              </select>
+            </label>
+
+            <label>
+              每周充电次数
+              <select name="weekly_charge_times">
+                <option value="1">1 次</option>
+                <option value="2">2 次</option>
+                <option value="3">3 次</option>
+                <option value="4" selected>4 次</option>
+                <option value="5">5 次</option>
+                <option value="6">6 次</option>
+                <option value="7">7 次</option>
+                <option value="10">10 次以上</option>
+              </select>
+            </label>
+
+            <label>
+              驾驶习惯
+              <select name="driving_style">
+                <option value="gentle">温和</option>
+                <option value="normal" selected>正常</option>
+                <option value="aggressive">激烈驾驶</option>
+              </select>
+            </label>
+
+            <label>
+              车辆负载
+              <select name="load_condition">
+                <option value="single">一人</option>
+                <option value="two_people">两人</option>
+                <option value="frequent_heavy_load">经常重载</option>
+              </select>
+            </label>
+
+            <label>
+              长期存放
+              <select name="long_term_storage">
+                <option value="rarely">很少</option>
+                <option value="occasionally" selected>偶尔</option>
+                <option value="often">经常</option>
+              </select>
+            </label>
+
+            <label>
+              城市
+              <select name="city">
+                <option value="Beijing">北京</option>
+                <option value="Shanghai">上海</option>
+                <option value="Guangzhou">广州</option>
+                <option value="Shenzhen">深圳</option>
+                <option value="Chengdu" selected>成都</option>
+                <option value="Chongqing">重庆</option>
+                <option value="Wuhan">武汉</option>
+                <option value="Xian">西安</option>
+                <option value="Nanjing">南京</option>
+                <option value="Hangzhou">杭州</option>
+                <option value="Changsha">长沙</option>
+                <option value="Zhengzhou">郑州</option>
+                <option value="Tianjin">天津</option>
+                <option value="Harbin">哈尔滨</option>
+                <option value="Shenyang">沈阳</option>
+                <option value="Changchun">长春</option>
+                <option value="Jinan">济南</option>
+                <option value="Qingdao">青岛</option>
+                <option value="Hefei">合肥</option>
+                <option value="Fuzhou">福州</option>
+                <option value="Xiamen">厦门</option>
+                <option value="Nanning">南宁</option>
+                <option value="Kunming">昆明</option>
+                <option value="Guiyang">贵阳</option>
+                <option value="Haikou">海口</option>
+                <option value="Urumqi">乌鲁木齐</option>
+                <option value="Lanzhou">兰州</option>
+                <option value="Yinchuan">银川</option>
+                <option value="Xining">西宁</option>
+                <option value="Lhasa">拉萨</option>
+              </select>
+            </label>
+
+            <label>
+              停放环境
+              <select name="parking_environment">
+                <option value="indoor">室内</option>
+                <option value="underground">地下车库</option>
+                <option value="outdoor_shade">室外遮阴</option>
+                <option value="outdoor_sunlight">室外暴晒</option>
+              </select>
+            </label>
+          </div>
+
+          <button class="primary-action" type="submit" title="开始预测">
+            开始预测
+          </button>
+        </form>
+      </section>
+
+      <section class="result-pane" aria-label="预测结果">
+        <div class="battery-visual" aria-hidden="true">
+          <div class="battery-cap"></div>
+          <div class="battery-body">
+            <div class="battery-fill" id="batteryFill"></div>
+          </div>
+        </div>
+
+        <div class="result-main">
+          <p class="eyebrow">当前 SOH</p>
+          <div class="soh-value" id="sohValue">--%</div>
+          <div class="risk-chip" id="riskChip">等待输入</div>
+        </div>
+
+        <dl class="metric-grid">
+          <div>
+            <dt>预计剩余</dt>
+            <dd id="rulValue">--</dd>
+          </div>
+          <div>
+            <dt>单次 DOD</dt>
+            <dd id="dodValue">--</dd>
+          </div>
+          <div>
+            <dt>年等效循环</dt>
+            <dd id="cyclesValue">--</dd>
+          </div>
+          <div>
+            <dt>模型</dt>
+            <dd id="modelUsed">--</dd>
+          </div>
+        </dl>
+
+        <div class="insight-columns">
+          <div>
+            <h2>主要衰减因素</h2>
+            <ul id="factorsList">
+              <li>提交表单后显示</li>
+            </ul>
+          </div>
+          <div>
+            <h2>使用建议</h2>
+            <ul id="suggestionsList">
+              <li>提交表单后显示</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

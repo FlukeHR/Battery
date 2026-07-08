@@ -1,0 +1,2 @@
+"""Battery life predictor package."""
+
