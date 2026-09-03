@@ -5,12 +5,7 @@ matplotlib
 scikit-learn
 xgboost
 shap
-fastapi
-uvicorn
-pydantic
 joblib
 torch
 tqdm
 pytest
-httpx
-
