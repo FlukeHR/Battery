@@ -5,7 +5,7 @@
   "description": "电检通微信小程序",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "eslint --ext .ts miniprogram tests",
+    "lint": "eslint --ext .ts app tests",
     "test": "vitest run"
   },
   "devDependencies": {
