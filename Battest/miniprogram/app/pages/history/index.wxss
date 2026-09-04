@@ -1,0 +1,114 @@
+.history-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 22rpx;
+  margin-bottom: 30rpx;
+}
+
+.history-header > view {
+  min-width: 0;
+  flex: 1;
+}
+
+.clear-link {
+  width: auto;
+  flex: 0 0 auto;
+  margin: 0 0 4rpx;
+  padding: 12rpx 5rpx;
+  background: transparent;
+  color: #b2453e;
+  font-size: 24rpx;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.history-card {
+  overflow: hidden;
+}
+
+.card-main {
+  padding: 26rpx 28rpx 22rpx;
+}
+
+.card-topline,
+.score-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scenario-chip {
+  padding: 9rpx 15rpx;
+  border-radius: 999rpx;
+  background: #edf4f0;
+  color: #496158;
+  font-size: 21rpx;
+  font-weight: 650;
+}
+
+.score-line {
+  margin-top: 20rpx;
+}
+
+.history-score {
+  color: #167c5a;
+  font-size: 58rpx;
+  font-weight: 820;
+  line-height: 1;
+}
+
+.history-score text {
+  margin-left: 3rpx;
+  font-size: 27rpx;
+}
+
+.history-arrow {
+  color: #9aa49f;
+  font-size: 48rpx;
+  font-weight: 300;
+}
+
+.battery-summary {
+  margin-top: 18rpx;
+  color: #30483e;
+  font-size: 24rpx;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.history-meta {
+  margin-top: 8rpx;
+  color: #7b8781;
+  font-size: 21rpx;
+  line-height: 1.5;
+}
+
+.delete-link {
+  width: 100%;
+  min-height: 68rpx;
+  border-top: 1rpx solid #edf0ee;
+  border-radius: 0;
+  background: #ffffff;
+  color: #a4524c;
+  font-size: 22rpx;
+  line-height: 68rpx;
+}
+
+.empty-action {
+  margin-top: 34rpx;
+}
+
+.storage-note {
+  margin: 24rpx 22rpx 0;
+  color: #849089;
+  font-size: 20rpx;
+  line-height: 1.55;
+  text-align: center;
+}

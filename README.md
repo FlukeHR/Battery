@@ -7,6 +7,7 @@
 ## 核心功能
 
 - 在线电池健康评估与中文结果报告
+- 微信小程序五步评估、本机历史与安全分享摘要
 - 磷酸铁锂、三元锂、铅酸等电池类型支持
 - 充电深度、等效循环、温度、负载和驾驶压力映射
 - 同一 Next.js 应用内提供页面和 API，无需单独启动后端
@@ -16,11 +17,14 @@
 
 ```text
 Battery/
-├── Battest/web/           # 唯一可部署应用（Next.js）
+├── Battest/web/           # 线上 Web 应用与预测 API（Next.js）
 │   └── src/
 │       ├── app/           # 页面与 Route Handlers
 │       ├── components/    # 表单、布局和 UI 组件
 │       └── lib/           # 在线预测与共享逻辑
+├── Battest/miniprogram/   # 微信原生 TypeScript 客户端
+│   ├── miniprogram/       # 页面、组件、服务与本地存储
+│   └── tests/             # 小程序纯函数与 API 契约测试
 ├── src/                   # Python 离线数据与模型管线
 ├── tests/                 # pytest 测试
 ├── dataset/CALB/          # 原始循环数据
@@ -31,6 +35,7 @@ Battery/
 
 ```text
 /assessment → /api/predict → battery-prediction.ts → JSON 评估结果
+微信小程序 → https://battest.ccwu.cc/api/predict → 同一预测实现
 ```
 
 ## 快速开始
@@ -50,6 +55,18 @@ npm run dev
 - 健康检查：[http://localhost:3000/api/health](http://localhost:3000/api/health)
 
 当前在线应用不需要环境变量，也不需要额外启动 FastAPI 服务。
+
+微信小程序开发：
+
+```bash
+cd Battest/miniprogram
+npm ci
+npm run typecheck
+npm run lint
+npm test
+```
+
+再使用微信开发者工具导入 `Battest/miniprogram`。真机请求前需将 `https://battest.ccwu.cc` 配置为小程序 request 合法域名，并仅在本机私有配置中填写真实 AppID。
 
 ## 生产构建
 
@@ -130,6 +147,10 @@ python -m pytest -q
 cd Battest/web
 npm run lint
 npm run build
+cd ../miniprogram
+npm run typecheck
+npm run lint
+npm test
 ```
 
 贡献约定见 [AGENTS.md](./AGENTS.md)。

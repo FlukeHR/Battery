@@ -1,0 +1,10 @@
+<view wx:if="{{active}}" class="step-card surface-card">
+  <view class="step-heading">
+    <view class="step-number">0{{stepNumber}}</view>
+    <view class="step-copy">
+      <view class="step-title">{{title}}</view>
+      <view wx:if="{{description}}" class="step-description">{{description}}</view>
+    </view>
+  </view>
+  <view class="step-content"><slot /></view>
+</view>

@@ -11,3 +11,7 @@ models/*.pkl
 models/*.json
 .matplotlib/
 *.log
+Battest/miniprogram/node_modules/
+Battest/miniprogram/miniprogram_npm/
+Battest/miniprogram/project.private.config.json
+Battest/miniprogram/coverage/

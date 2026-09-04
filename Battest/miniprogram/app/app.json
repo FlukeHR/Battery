@@ -1,0 +1,29 @@
+{
+  "pages": [
+    "pages/assessment/index",
+    "pages/history/index",
+    "pages/about/index",
+    "pages/result/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#f6f8f5",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "电检通",
+    "backgroundColor": "#f6f8f5",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#68736d",
+    "selectedColor": "#167c5a",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/assessment/index", "text": "评估" },
+      { "pagePath": "pages/history/index", "text": "记录" },
+      { "pagePath": "pages/about/index", "text": "关于" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

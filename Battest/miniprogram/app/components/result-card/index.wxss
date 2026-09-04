@@ -1,0 +1,231 @@
+.report-card {
+  overflow: hidden;
+  border: 1rpx solid #dfe6e1;
+  border-radius: 28rpx;
+  background: #ffffff;
+  box-shadow: 0 12rpx 32rpx rgba(29, 65, 51, 0.07);
+}
+
+.report-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding: 30rpx;
+  background: #126b4e;
+  color: #ffffff;
+}
+
+.report-kicker {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 18rpx;
+  font-weight: 700;
+  letter-spacing: 3rpx;
+}
+
+.report-heading {
+  margin-top: 7rpx;
+  font-size: 30rpx;
+  font-weight: 750;
+}
+
+.model-chip {
+  flex: 0 0 auto;
+  padding: 10rpx 15rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.13);
+  font-size: 20rpx;
+}
+
+.score-section {
+  padding: 44rpx 30rpx 24rpx;
+  text-align: center;
+}
+
+.score-label {
+  color: #68736d;
+  font-size: 22rpx;
+  font-weight: 650;
+  letter-spacing: 2rpx;
+}
+
+.score-number {
+  margin: 8rpx 0 12rpx;
+  color: #167c5a;
+  font-size: 104rpx;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.score-number text {
+  margin-left: 3rpx;
+  font-size: 38rpx;
+}
+
+.risk-message {
+  margin: 18rpx auto 0;
+  max-width: 540rpx;
+  color: #68736d;
+  font-size: 23rpx;
+  line-height: 1.55;
+}
+
+.battery-meter {
+  display: flex;
+  align-items: center;
+  padding: 0 34rpx 34rpx;
+}
+
+.battery-body {
+  height: 42rpx;
+  flex: 1;
+  overflow: hidden;
+  border: 5rpx solid #283b33;
+  border-radius: 11rpx;
+  background: #edf1ee;
+}
+
+.battery-fill {
+  height: 100%;
+  min-width: 4rpx;
+  background: linear-gradient(90deg, #45af81, #167c5a);
+}
+
+.battery-fill.risk-medium {
+  background: linear-gradient(90deg, #f2c45c, #dd8c32);
+}
+
+.battery-fill.risk-high {
+  background: linear-gradient(90deg, #ef867d, #bd453d);
+}
+
+.battery-tip {
+  width: 10rpx;
+  height: 24rpx;
+  border-radius: 0 6rpx 6rpx 0;
+  background: #283b33;
+}
+
+.metric-grid {
+  display: flex;
+  gap: 16rpx;
+  padding: 0 30rpx 32rpx;
+}
+
+.metric {
+  min-width: 0;
+  flex: 1;
+  padding: 22rpx;
+  border: 1rpx solid #e1e7e3;
+  border-radius: 20rpx;
+  background: #f8faf8;
+}
+
+.metric-label {
+  color: #68736d;
+  font-size: 21rpx;
+}
+
+.metric-value {
+  margin-top: 8rpx;
+  color: #15241e;
+  font-size: 29rpx;
+  font-weight: 750;
+}
+
+.insight-section {
+  margin: 0 30rpx 28rpx;
+  padding-top: 28rpx;
+  border-top: 1rpx solid #e3e8e5;
+}
+
+.insight-title {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  color: #15241e;
+  font-size: 27rpx;
+  font-weight: 750;
+}
+
+.factor-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: #e99143;
+}
+
+.suggestion-mark {
+  color: #167c5a;
+  font-weight: 850;
+}
+
+.insight-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  margin-top: 18rpx;
+  color: #56625c;
+  font-size: 25rpx;
+  line-height: 1.6;
+}
+
+.row-index {
+  display: flex;
+  width: 35rpx;
+  height: 35rpx;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rpx;
+  border-radius: 50%;
+  background: #fff1e5;
+  color: #bd6920;
+  font-size: 19rpx;
+  font-weight: 750;
+}
+
+.suggestion-bullet {
+  flex: 0 0 auto;
+  color: #167c5a;
+  font-weight: 850;
+}
+
+.row-copy {
+  flex: 1;
+}
+
+.basis-section {
+  margin: 0 30rpx 26rpx;
+  padding: 24rpx;
+  border-radius: 20rpx;
+  background: #f1f6f3;
+}
+
+.basis-title {
+  color: #275343;
+  font-size: 24rpx;
+  font-weight: 750;
+}
+
+.basis-copy {
+  margin-top: 9rpx;
+  color: #65716b;
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+.report-meta {
+  padding: 0 30rpx 22rpx;
+  color: #829089;
+  font-size: 20rpx;
+  text-align: center;
+}
+
+.disclaimer {
+  padding: 24rpx 28rpx;
+  background: #f5f7f5;
+  color: #68736d;
+  font-size: 21rpx;
+  line-height: 1.55;
+}
