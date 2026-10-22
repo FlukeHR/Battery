@@ -7,5 +7,14 @@ data/processed/*.csv
 data/plots/*.png
 models/*.pkl
 models/*.json
+models/lfp/*.pkl
+models/lfp/*.json
+data/plots/lfp/*.png
+data/plots/ncm/*.png
 .matplotlib/
 *.log
+
+# 原始数据、输出文件和临时文件仅保留在本地。
+/dataset/
+/output/
+/tmp/

@@ -11,17 +11,18 @@
       <section class="input-pane" aria-label="预测输入">
         <div class="title-row">
           <div>
-            <p class="eyebrow">CALB + XGBoost</p>
+            <p class="eyebrow">CALB · HUST · MATR</p>
             <h1>电动车电池寿命预测</h1>
           </div>
           <div class="model-pill" id="modelStatus">模型检查中</div>
         </div>
 
+        <p class="dataset-note" id="datasetHint" aria-live="polite">磷酸铁锂：使用 HUST、MATR 数据集。</p>
         <form id="predictForm">
           <div class="form-grid">
             <label>
               电池类型
-              <select name="battery_type">
+              <select name="battery_type" aria-describedby="datasetHint">
                 <option value="LFP">磷酸铁锂</option>
                 <option value="NCM">三元锂</option>
                 <option value="Lead-acid">铅酸</option>
@@ -201,6 +202,7 @@
           </div>
         </dl>
 
+        <p class="dataset-note" id="predictionNote" aria-live="polite">选择电池类型后，将自动匹配同类型模型。</p>
         <div class="insight-columns">
           <div>
             <h2>主要衰减因素</h2>

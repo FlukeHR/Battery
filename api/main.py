@@ -38,6 +38,9 @@ class PredictionResponse(BaseModel):
     suggestions: list[str]
     mapped_features: dict[str, float]
     model_used: bool
+    battery_chemistry: str
+    training_datasets: list[str]
+    prediction_note: str
 
 
 app = FastAPI(title="E-bike Battery Life Predictor", version="1.0.0")
@@ -55,10 +58,18 @@ def index():
 
 
 @app.get("/health")
-def health() -> dict[str, bool | str]:
+def health() -> dict:
+    models = {}
+    for chemistry in ("ncm", "lfp"):
+        bundle = load_model_bundle(battery_chemistry=chemistry)
+        models[chemistry] = {
+            "model_loaded": bundle is not None,
+            "training_datasets": list(bundle.training_datasets) if bundle else [],
+        }
     return {
         "status": "ok",
-        "model_loaded": load_model_bundle() is not None,
+        "model_loaded": all(model["model_loaded"] for model in models.values()),
+        "models": models,
     }
 
 

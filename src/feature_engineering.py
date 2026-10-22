@@ -14,9 +14,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import GroupShuffleSplit, train_test_split
+from sklearn.model_selection import GroupShuffleSplit
 
-from src.config import PLOTS_DIR, PROCESSED_DIR, RANDOM_STATE, REPORTS_DIR
+from src.config import DATASET_CHEMISTRIES, PLOTS_DIR, PROCESSED_DIR, RANDOM_STATE, REPORTS_DIR
 from src.data_loader import iter_cell_pickles
 
 
@@ -118,7 +118,9 @@ def _temperature_from_name(name: str) -> float | None:
     return float(match.group(1))
 
 
-def extract_cycle_features(cell_data: dict[str, Any], source_file: str | None = None) -> list[dict[str, Any]]:
+def extract_cycle_features(
+    cell_data: dict[str, Any], source_file: str | None = None, dataset: str | None = None,
+) -> list[dict[str, Any]]:
     """Extract one row per cycle and calculate SOH from capacity."""
     cycles = cell_data.get("cycle_data") or []
     if not isinstance(cycles, list):
@@ -131,6 +133,13 @@ def extract_cycle_features(cell_data: dict[str, Any], source_file: str | None = 
         initial_capacity = 1.0
 
     nominal_capacity = _numeric_scalar(cell_data.get("nominal_capacity_in_Ah")) or initial_capacity
+    dataset = dataset or (source_file or str(cell_data.get("cell_id", ""))).split("_")[0]
+    chemistry = DATASET_CHEMISTRIES.get(dataset, "unknown")
+    material = str(cell_data.get("cathode_material") or "").lower()
+    if material and chemistry != "unknown":
+        allowed = {"ncm": {"ncm", "nmc"}, "lfp": {"lfp", "lifepo4"}}
+        if material not in allowed[chemistry]:
+            raise ValueError(f"{source_file}: cathode {material!r} does not match {chemistry}")
     ambient_temp = _temperature_from_name(source_file or cell_data.get("cell_id", ""))
     rows: list[dict[str, Any]] = []
 
@@ -149,6 +158,8 @@ def extract_cycle_features(cell_data: dict[str, Any], source_file: str | None = 
         row: dict[str, Any] = {
             "cell_id": cell_data.get("cell_id") or Path(source_file or "unknown").stem,
             "source_file": source_file or "",
+            "dataset": dataset,
+            "battery_chemistry": chemistry,
             "cycle_index": int(cycle_number),
             "cycle_position": position,
             "nominal_capacity_in_Ah": float(nominal_capacity),
@@ -184,7 +195,9 @@ def extract_cycle_features(cell_data: dict[str, Any], source_file: str | None = 
 def build_feature_table(raw_dir: str | Path) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     for path, cell_data in iter_cell_pickles(raw_dir):
-        rows.extend(extract_cycle_features(cell_data, source_file=path.name))
+        cell_rows = extract_cycle_features(cell_data, source_file=path.name, dataset=path.parent.name)
+        rows.extend(cell_rows)
+        print(f"Extracted {path.name}: {len(cell_rows)} rows", flush=True)
     if not rows:
         raise ValueError(f"No cycle feature rows extracted from {raw_dir}")
     df = pd.DataFrame(rows)
@@ -196,11 +209,10 @@ def build_feature_table(raw_dir: str | Path) -> pd.DataFrame:
 
 def clean_feature_table(df: pd.DataFrame) -> pd.DataFrame:
     cleaned = df.copy()
-    required = ["soh", "cycle_index", "temperature_mean", "voltage_mean", "current_abs_mean"]
+    required = ["soh", "cycle_index", "voltage_mean", "current_abs_mean"]
     cleaned = cleaned.dropna(subset=[col for col in required if col in cleaned.columns])
     cleaned = cleaned[(cleaned["soh"] > 0.2) & (cleaned["soh"] <= 1.2)]
-    numeric_columns = cleaned.select_dtypes(include=[np.number]).columns
-    cleaned[numeric_columns] = cleaned[numeric_columns].fillna(cleaned[numeric_columns].median(numeric_only=True))
+    # HUST has no temperatures; impute from training rows only in train_model.
     return cleaned.reset_index(drop=True)
 
 
@@ -212,18 +224,16 @@ def save_processed_datasets(
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
     clean_df = clean_feature_table(df)
-    if clean_df["cell_id"].nunique() > 1:
+    splits = []
+    groups = clean_df.groupby("dataset") if "dataset" in clean_df else [("all", clean_df)]
+    for dataset, group in groups:
+        if group["cell_id"].nunique() < 2:
+            raise ValueError(f"{dataset}: at least two cells are required for a grouped holdout")
         splitter = GroupShuffleSplit(n_splits=1, test_size=test_size, random_state=RANDOM_STATE)
-        train_idx, test_idx = next(splitter.split(clean_df, groups=clean_df["cell_id"]))
-        train_df = clean_df.iloc[train_idx]
-        test_df = clean_df.iloc[test_idx]
-    else:
-        train_df, test_df = train_test_split(
-            clean_df,
-            test_size=test_size,
-            random_state=RANDOM_STATE,
-            shuffle=True,
-        )
+        train_idx, test_idx = next(splitter.split(group, groups=group["cell_id"]))
+        splits.append((group.iloc[train_idx], group.iloc[test_idx]))
+    train_df = pd.concat([split[0] for split in splits])
+    test_df = pd.concat([split[1] for split in splits])
     paths = {
         "cycle_features": output / "cycle_features.csv",
         "train": output / "train.csv",
@@ -275,12 +285,19 @@ def write_feature_summary(df: pd.DataFrame, paths: dict[str, Path], output_path:
         "soh_min": float(df["soh"].min()),
         "soh_max": float(df["soh"].max()),
         "files": {name: str(path) for name, path in paths.items()},
+        "datasets": {
+            name: {"rows": len(group), "cells": int(group["cell_id"].nunique()),
+                   "missing_temperature_rows": int(group["temperature_mean"].isna().sum())}
+            for name, group in df.groupby("dataset")
+        },
     }
     output.write_text(
-        "# Feature Engineering Report\n\n"
-        "## Summary\n\n"
-        f"```json\n{json.dumps(summary, indent=2)}\n```\n\n"
-        "## Columns\n\n"
+        "# 特征工程报告\n\n"
+        "## 数据摘要\n\n"
+        "下列 JSON 保留程序字段名，记录样本数、电芯数、循环范围、SOH 范围、输出路径及各数据集温度缺失数量。\n\n"
+        f"```json\n{json.dumps(summary, indent=2, ensure_ascii=False)}\n```\n\n"
+        "## 数据列\n\n"
+        "列名与处理后的 CSV 保持一致。\n\n"
         + "\n".join(f"- `{column}`" for column in df.columns)
         + "\n",
         encoding="utf-8",
@@ -292,6 +309,7 @@ def run_feature_pipeline(raw_dir: str | Path, output_dir: str | Path = PROCESSED
     df = build_feature_table(raw_dir)
     paths = save_processed_datasets(df, output_dir=output_dir)
     clean_df = pd.read_csv(paths["cycle_features"])
-    generate_plots(clean_df, PLOTS_DIR)
+    for chemistry, group in clean_df.groupby("battery_chemistry"):
+        generate_plots(group, PLOTS_DIR / chemistry)
     write_feature_summary(clean_df, paths, REPORTS_DIR / "feature_engineering_report.md")
     return paths

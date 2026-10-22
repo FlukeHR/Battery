@@ -9,6 +9,11 @@ const cyclesValue = document.querySelector("#cyclesValue");
 const modelUsed = document.querySelector("#modelUsed");
 const factorsList = document.querySelector("#factorsList");
 const suggestionsList = document.querySelector("#suggestionsList");
+const datasetHint = document.querySelector("#datasetHint");
+const predictionNote = document.querySelector("#predictionNote");
+const batteryType = form.elements.namedItem("battery_type");
+let modelHealth = null;
+let predictionRequest = 0;
 
 const numericFields = new Set([
   "voltage",
@@ -44,6 +49,30 @@ function setRisk(level) {
   riskChip.textContent = labels[level] || level;
 }
 
+function updateDatasetHint() {
+  const chemistry = batteryType.value.toLowerCase();
+  const descriptions = {
+    lfp: "磷酸铁锂：使用 HUST、MATR 数据集。",
+    ncm: "三元锂：使用 CALB 数据集。",
+  };
+  datasetHint.textContent = descriptions[chemistry] || "暂无匹配的实验数据，将使用习惯规则估算。";
+  const model = modelHealth?.models?.[chemistry];
+  modelStatus.textContent = !descriptions[chemistry]
+    ? "规则估算"
+    : modelHealth === null
+      ? "模型检查中"
+      : model?.model_loaded ? "同类型模型已加载" : "规则兜底";
+}
+
+function clearResult(message) {
+  sohValue.textContent = "--%";
+  batteryFill.style.width = "0%";
+  riskChip.className = "risk-chip";
+  riskChip.textContent = message;
+  for (const node of [rulValue, dodValue, cyclesValue, modelUsed]) node.textContent = "--";
+  predictionNote.textContent = message;
+}
+
 function renderResult(result) {
   sohValue.textContent = `${result.soh_percent}%`;
   const fillWidth = Math.max(0, Math.min(100, result.soh_percent));
@@ -58,7 +87,9 @@ function renderResult(result) {
   rulValue.textContent = `${result.estimated_remaining_months} 个月`;
   dodValue.textContent = `${Math.round(result.mapped_features.single_charge_dod * 100)}%`;
   cyclesValue.textContent = `${result.mapped_features.annual_equivalent_cycles}`;
-  modelUsed.textContent = result.model_used ? "XGBoost" : "规则兜底";
+  modelUsed.textContent = result.model_used
+    ? `XGBoost · ${result.training_datasets.join(" + ")}` : "规则估算";
+  predictionNote.textContent = result.prediction_note;
   setList(factorsList, result.main_degradation_factors);
   setList(suggestionsList, result.suggestions);
 }
@@ -66,8 +97,9 @@ function renderResult(result) {
 async function refreshHealth() {
   try {
     const response = await fetch("/health");
-    const health = await response.json();
-    modelStatus.textContent = health.model_loaded ? "XGBoost 已加载" : "规则兜底";
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    modelHealth = await response.json();
+    updateDatasetHint();
   } catch (error) {
     modelStatus.textContent = "API 未连接";
   }
@@ -75,9 +107,13 @@ async function refreshHealth() {
 
 async function submitPrediction(event) {
   event.preventDefault();
+  const requestId = ++predictionRequest;
   const button = form.querySelector("button");
   button.disabled = true;
-    button.textContent = "预测中";
+  button.textContent = "预测中";
+  clearResult("预测中");
+  setList(factorsList, ["预测中"]);
+  setList(suggestionsList, ["预测中"]);
   try {
     const response = await fetch("/predict", {
       method: "POST",
@@ -87,16 +123,26 @@ async function submitPrediction(event) {
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    renderResult(await response.json());
+    const result = await response.json();
+    if (requestId === predictionRequest) renderResult(result);
   } catch (error) {
+    if (requestId !== predictionRequest) return;
+    clearResult("预测请求失败");
     setList(factorsList, ["预测请求失败"]);
     setList(suggestionsList, ["确认 FastAPI 服务正在运行后重试。"]);
   } finally {
-    button.disabled = false;
-    button.textContent = "开始预测";
+    if (requestId === predictionRequest) {
+      button.disabled = false;
+      button.textContent = "开始预测";
+    }
   }
 }
 
 form.addEventListener("submit", submitPrediction);
+batteryType.addEventListener("change", () => {
+  updateDatasetHint();
+  form.requestSubmit();
+});
+updateDatasetHint();
 refreshHealth();
 form.requestSubmit();

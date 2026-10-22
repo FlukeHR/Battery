@@ -1,82 +1,65 @@
-# Project Status
+# 项目状态
 
-Last updated: 2026-07-08
+最后更新：2026-10-23
 
-## Current State
+## 当前实现
 
-- Project v1 is implemented with CALB data inspection, cycle feature engineering, XGBoost SOH prediction, FastAPI, and a static web prototype.
-- Transformer training is intentionally skipped for v1.
-- The project directory is not currently a git repository.
-- The Python environment is `dachuang`.
+- 使用 FastAPI 和静态网页，结合 XGBoost 与现有使用习惯规则估算 SOH 和剩余使用寿命。
+- CALB 为三元锂（NCM / NMC），模型位于 `models/`。
+- HUST 与 MATR 为磷酸铁锂（LFP），合并训练的模型位于 `models/lfp/`。
+- 网页根据电池类型自动切换模型、重新预测并显示实际训练来源。铅酸和不确定类型会明确标注为规则估算。
+- 两类模型沿用相同特征列表、XGBoost 算法及参数，保留模型占 75%、规则占 25% 的融合方式和原有剩余寿命计算。
+- 项目已使用 Git 管理。Python 环境为 `dachuang`，版本为 Python 3.12。
+- 项目文档与自动报告模板已统一为中文，代理规范文件为 `AGENTS.md`。
 
-## Verified Artifacts
+## 已验证的数据与指标
 
-- Raw data: `dataset/CALB/*.pkl`
-- Data structure report: `data/reports/data_structure_report.md`
-- Processed data: `data/processed/cycle_features.csv`
-- Train/test split: `data/processed/train.csv`, `data/processed/test.csv`
-- Plots: `data/plots/*.png`
-- Model: `models/xgboost_model.pkl`
-- Model metadata: `models/model_metadata.json`
-- Model report: `data/reports/model_report.md`
-- API: `api/main.py`
-- Static app: `web/static/index.html`
+| 数据来源 | 文件数 / 电芯数 | 有效循环样本数 |
+|---|---:|---:|
+| CALB | 27 | 2,791 |
+| HUST | 77 | 146,120 |
+| MATR | 169 | 140,001 |
+| 合计 | 273 | 288,912 |
 
-## Current Metrics
+| 模型 | 训练样本数 | 测试样本数 | 平均绝对误差 | 均方根误差 | 决定系数 R² |
+|---|---:|---:|---:|---:|---:|
+| CALB / 三元锂 | 2,196 | 595 | 0.005945 | 0.009101 | 0.865801 |
+| HUST + MATR / 磷酸铁锂 | 228,241 | 57,880 | 0.009408 | 0.016031 | 0.947980 |
 
-- CALB pickle files: 27
-- Usable cycle rows: 2791
-- Train rows: 2196
-- Test rows: 595
-- Split strategy: grouped by `cell_id`
-- XGBoost MAE: 0.005945 SOH
-- XGBoost RMSE: 0.009101 SOH
-- XGBoost R2: 0.865801
-- Tests: 7 passed
+每个数据来源均按完整电芯划分训练集与测试集。缺失特征的默认值只根据训练集计算。HUST 缺失温度的样本保留，再使用磷酸铁锂训练集的温度中位数补齐。模型元数据记录化学类型、来源、训练及测试电芯编号、默认值和各来源的测试指标。
 
-## Useful Commands
+## 生成文件
 
-```powershell
-conda run -n dachuang python -m src.inspect_pkl
-conda run -n dachuang python -m src.run_feature_pipeline
-conda run -n dachuang python -m src.train_xgboost
-conda run -n dachuang pytest -q
-conda run -n dachuang uvicorn api.main:app --host 127.0.0.1 --port 8000
-```
+- `data/reports/data_structure_report.md`：全部支持数据文件的结构检查结果。
+- `data/reports/feature_engineering_report.md`：来源、样本数及温度缺失数量。
+- `data/processed/{cycle_features,train,test}.csv`：带来源和化学类型标记的特征。
+- `data/plots/{ncm,lfp}/*.png`：按化学类型分别生成的图像。
+- `models/{xgboost_model.pkl,model_metadata.json}`：CALB 三元锂模型。
+- `models/lfp/{xgboost_model.pkl,model_metadata.json}`：HUST + MATR 磷酸铁锂模型。
+- `data/reports/{model_report.md,feature_importance.csv}`：三元锂模型评估报告与特征重要性。
+- `data/reports/lfp/{model_report.md,feature_importance.csv}`：磷酸铁锂模型评估报告与特征重要性。
 
-Open the app at:
+复现和启动命令见 `README.md`。原始数据、输出文件、临时文件、处理后的 CSV、图像和模型文件仅保留在本地。
 
-```text
-http://127.0.0.1:8000/
-```
+## 验证记录
 
-## Done
+- 已检查全部 273 个文件，并完成特征处理流程及两类 XGBoost 模型训练。
+- 23 项测试已通过，覆盖温度缺失、按来源和电芯分组划分、训练集默认值、模型加载、化学类型匹配及别名、兜底逻辑和接口响应。
+- 浏览器已确认：磷酸铁锂显示 `XGBoost · HUST + MATR`，三元锂显示 `XGBoost · CALB`，铅酸显示规则估算。控制台未发现警告或错误。
+- 网页验证截图保存在本地 `output/lfp-web-20261023.jpg`，不上传 Git。
+- 本地验证时服务端口为 8001，常规启动命令仍使用 8000。
+- 本次环境中 conda 启动器不可用，直接使用 `D:\Anaconda\envs\dachuang\python.exe` 可运行。
+- 托管命令环境的网络隔离阻止了 asyncio 回环连接初始化，经授权在沙箱外执行后，测试与本地服务正常运行。因系统原有 pytest 临时目录无访问权限，验证使用项目 `tmp/` 下的临时及缓存目录。
 
-- Created project structure.
-- Inspected CALB pickle structure.
-- Generated cycle-level features and SOH labels.
-- Saved processed datasets and plots.
-- Trained XGBoost baseline.
-- Saved model, metadata, metrics, and feature importance.
-- Built user behavior mapping layer.
-- Built `/predict`, `/health`, and static app UI.
-- Added tests for mapping, feature extraction, predictor output, and API behavior.
+## 版本管理
 
-## Next TODOs
+- `.gitignore` 排除整个 `dataset/`、`output/` 和 `tmp/`。
+- 已取消 CALB 数据的 Git 跟踪，全部原始数据保留在本地；未清理历史提交中的旧数据。
+- 代码、测试、中文文档和文字评估报告纳入版本管理。
 
-- Add SHAP explanations or per-prediction feature contribution output.
-- Add internal resistance features from `internal_resistance_in_ohm`.
-- Improve user-to-model mapping with measured e-bike data.
-- Add confidence bands or prediction uncertainty.
-- Add a calibration/evaluation notebook for model comparison.
-- Add optional sequence-model experiment after XGBoost remains the baseline.
-- Consider initializing a git repository if version history is needed.
+## 已知限制与后续工作
 
-## Known Issues
-
-- User inputs cannot directly reconstruct lab voltage/current/temperature sequences, so some XGBoost features use training-set median defaults.
-- The app no longer asks for daily mileage; equivalent cycles are estimated from charge SOC window and weekly charge frequency.
-- Battery type is active in the heuristic lifecycle prior, but the saved XGBoost model itself was not retrained with chemistry one-hot features.
-- Prediction combines XGBoost SOH with a conservative heuristic blend; this improves product stability but is not a pure lab-model prediction.
-- Browser automation was unavailable in the previous verification session, so UI validation was HTTP-level rather than screenshot-level.
-- Starting uvicorn as a long-lived hidden background process was unreliable in the managed shell; run it in a terminal with the command above.
+- 实验循环的测试指标不能直接证明用户预测或剩余寿命估算的准确性；电池组容量、电流和实际使用习惯与实验电芯存在差异。
+- HUST 没有实测温度。磷酸铁锂环境温度整列缺失，训练默认值为零，其他缺失特征使用训练集中位数。
+- 用户预测保留原有化学类型寿命先验，尚未用真实使用记录拟合。
+- SHAP 特征贡献、不确定性区间、内阻特征及实测数据校准仍为后续工作，Transformer 尚未训练。

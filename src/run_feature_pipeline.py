@@ -7,7 +7,7 @@ from src.feature_engineering import run_feature_pipeline
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Build CALB cycle-level features.")
+    parser = argparse.ArgumentParser(description="Build CALB, HUST and MATR cycle-level features.")
     parser.add_argument("--raw-dir", default=str(RAW_DATA_DIR))
     parser.add_argument("--output-dir", default=str(PROCESSED_DIR))
     args = parser.parse_args()

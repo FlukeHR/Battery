@@ -1,7 +1,11 @@
-from src.predictor import predict_from_user_input
+import numpy as np
+import pytest
+
+from src.predictor import ModelBundle, predict_from_user_input
 
 
-def test_predict_from_user_input_returns_user_facing_fields_without_model():
+def test_predict_from_user_input_returns_user_facing_fields_without_model(monkeypatch):
+    monkeypatch.setattr("src.predictor.load_model_bundle", lambda **kwargs: None)
     result = predict_from_user_input(
         {
             "battery_type": "LFP",
@@ -28,3 +32,42 @@ def test_predict_from_user_input_returns_user_facing_fields_without_model():
     assert result["suggestions"]
     assert "single_charge_dod" in result["mapped_features"]
     assert "nominal_cycle_life" in result["mapped_features"]
+    assert result["model_used"] is False
+    assert result["training_datasets"] == []
+
+
+class ConstantModel:
+    def predict(self, frame):
+        return np.full(len(frame), 0.92)
+
+
+@pytest.mark.parametrize("battery_type,chemistry,datasets", [
+    ("LFP", "lfp", ("HUST", "MATR")),
+    ("LiFePO4", "lfp", ("HUST", "MATR")),
+    ("磷酸铁锂", "lfp", ("HUST", "MATR")),
+    ("NCM", "ncm", ("CALB",)),
+    ("NMC", "ncm", ("CALB",)),
+    ("三元锂电池", "ncm", ("CALB",)),
+])
+def test_prediction_routes_to_matching_chemistry(monkeypatch, battery_type, chemistry, datasets):
+    bundle = ModelBundle(ConstantModel(), ["cycle_index"], {"cycle_index": 0}, {}, chemistry, datasets)
+    calls = []
+
+    def load(*, battery_chemistry):
+        calls.append(battery_chemistry)
+        return bundle
+
+    monkeypatch.setattr("src.predictor.load_model_bundle", load)
+    result = predict_from_user_input({"battery_type": battery_type})
+    assert calls == [chemistry]
+    assert result["model_used"]
+    assert result["battery_chemistry"] == chemistry
+    assert result["training_datasets"] == list(datasets)
+
+
+@pytest.mark.parametrize("battery_type", ["LFP", "Lead-acid", "Unknown"])
+def test_wrong_chemistry_bundle_is_never_used(battery_type):
+    bundle = ModelBundle(ConstantModel(), ["cycle_index"], {}, {})
+    result = predict_from_user_input({"battery_type": battery_type}, model_bundle=bundle)
+    assert result["model_used"] is False
+    assert result["training_datasets"] == []
