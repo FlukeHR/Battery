@@ -6,6 +6,17 @@ import {
 } from "../app/services/prediction";
 
 describe("prediction response contract", () => {
+  it("keeps the trained model source and algorithm version from the shared API", () => {
+    const result = adaptPredictionResult({
+      soh_percent: 97, estimated_remaining_months: 60, risk_level: "low",
+      main_degradation_factors: [], suggestions: [], model_used: true,
+      battery_chemistry: "lfp", training_datasets: ["HUST", "MATR"],
+      prediction_note: "使用同类型模型估算。", algorithm_version: "xgboost-v1",
+    });
+    expect(result.training_datasets).toEqual(["HUST", "MATR"]);
+    expect(result.algorithm_version).toBe("xgboost-v1");
+    expect(result.battery_chemistry).toBe("lfp");
+  });
   it("adapts the public fields returned by the website API", () => {
     const result = adaptPredictionResult({
       soh: 0.923,

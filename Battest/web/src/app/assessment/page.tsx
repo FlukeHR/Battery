@@ -17,7 +17,7 @@ export default function AssessmentPage() {
         <div className="absolute inset-0 bg-grid-soft opacity-35 [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]" />
         <div className="container relative py-14 sm:py-20">
           <Badge className="mb-4">
-            <Sparkles className="mr-1.5 h-3.5 w-3.5" /> CALB 研究数据 · 可解释规则评估
+            <Sparkles className="mr-1.5 h-3.5 w-3.5" /> CALB · HUST · MATR 研究数据
           </Badge>
           <h1 className="max-w-3xl text-balance text-3xl font-bold sm:text-5xl">
             在线评估你的<span className="text-primary">电池健康状态</span>
@@ -27,7 +27,7 @@ export default function AssessmentPage() {
           </p>
           <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
-              <Database className="h-4 w-4 text-primary" /> 2,791 条 CALB 循环数据
+              <Database className="h-4 w-4 text-primary" /> 288,912 条实验循环数据
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Brain className="h-4 w-4 text-primary" /> 可解释的使用习惯修正

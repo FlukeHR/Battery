@@ -98,6 +98,8 @@ const statusPresentation: Record<HealthStatus, { label: string; dot: string }> =
 
 export function BatteryAssessment() {
   const [healthStatus, setHealthStatus] = useState<HealthStatus>("checking");
+  const [modelAvailability, setModelAvailability] = useState<Record<string, boolean>>({});
+  const [batteryType, setBatteryType] = useState("LFP");
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -112,7 +114,13 @@ export function BatteryAssessment() {
           signal: controller.signal,
         });
         if (!response.ok) throw new Error("Health check failed");
-        const health = (await response.json()) as { model_loaded?: boolean };
+        const health = (await response.json()) as {
+          model_loaded?: boolean;
+          models?: Record<string, { model_loaded: boolean }>;
+        };
+        setModelAvailability(Object.fromEntries(Object.entries(health.models ?? {}).map(
+          ([key, value]) => [key, value.model_loaded]
+        )));
         setHealthStatus(health.model_loaded ? "model" : "fallback");
       } catch (healthError) {
         if ((healthError as Error).name !== "AbortError") {
@@ -153,6 +161,7 @@ export function BatteryAssessment() {
     };
 
     setError(null);
+    setResult(null);
     setIsSubmitting(true);
 
     try {
@@ -172,6 +181,9 @@ export function BatteryAssessment() {
       }
 
       setResult(responseBody as PredictionResult);
+      setModelAvailability((previous) => ({
+        ...previous, [responseBody.battery_chemistry]: responseBody.model_used,
+      }));
       setHealthStatus(responseBody.model_used ? "model" : "fallback");
     } catch (submissionError) {
       setError(
@@ -184,7 +196,10 @@ export function BatteryAssessment() {
     }
   }
 
-  const modelStatus = statusPresentation[healthStatus];
+  const modelStatus = statusPresentation[
+    healthStatus === "checking" || healthStatus === "offline" ? healthStatus
+      : modelAvailability[batteryType.toLowerCase()] ? "model" : "fallback"
+  ];
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[1.08fr_0.92fr]">
@@ -208,11 +223,22 @@ export function BatteryAssessment() {
           <form onSubmit={submitPrediction} className="space-y-8">
             <FormSection number="01" title="电池基础信息">
               <AssessmentField id="battery_type" label="电池类型">
-                <select id="battery_type" name="battery_type" defaultValue="LFP" className={fieldClassName}>
+                <select id="battery_type" name="battery_type" value={batteryType}
+                  disabled={isSubmitting} className={fieldClassName}
+                  onChange={(event) => {
+                    setBatteryType(event.target.value);
+                    setResult(null);
+                    event.currentTarget.form?.requestSubmit();
+                  }}>
                   {batteryTypes.map(([value, label]) => (
                     <option key={value} value={value}>{label}</option>
                   ))}
                 </select>
+                <p className="text-xs text-muted-foreground">
+                  {batteryType === "LFP" ? "参考 HUST、MATR 磷酸铁锂实验数据。"
+                    : batteryType === "NCM" ? "参考 CALB 三元锂实验数据。"
+                    : "暂无对应实验模型，使用习惯规则估算。"}
+                </p>
               </AssessmentField>
               <AssessmentField id="battery_age_months" label="已使用月份">
                 <input
@@ -443,6 +469,11 @@ function AssessmentResult({ result }: { result: PredictionResult | null }) {
             value={String(Math.round(result.mapped_features.annual_equivalent_cycles || 0)) + " 次"}
           />
         </dl>
+
+        <div className="rounded-md bg-secondary/50 p-3 text-xs leading-relaxed text-muted-foreground">
+          {result.model_used ? `训练数据：${result.training_datasets.join(" + ")}。` : "使用习惯规则估算。"}
+          {result.prediction_note}
+        </div>
 
         <InsightList
           icon={<AlertCircle className="h-4 w-4 text-accent" />}

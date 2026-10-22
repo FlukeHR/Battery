@@ -10,12 +10,12 @@
 
 ## 目录与职责
 
-- `miniprogram/pages/`：页面与页面级交互。
-- `miniprogram/components/`：可复用展示组件。
-- `miniprogram/services/`：API 请求、超时和响应适配。
-- `miniprogram/stores/`：表单草稿与本地历史。
-- `miniprogram/types/`：共享 TypeScript 类型。
-- `miniprogram/utils/`：无副作用、可测试的工具函数。
+- `app/pages/`：页面与页面级交互。
+- `app/components/`：可复用展示组件。
+- `app/services/`：API 请求、超时和响应适配。
+- `app/stores/`：表单草稿与本地历史。
+- `app/types/`：共享 TypeScript 类型。
+- `app/utils/`：无副作用、可测试的工具函数。
 - `tests/`：单元、契约和组件测试。
 
 ## 编码约定

@@ -28,7 +28,7 @@
 
   <view class="about-card surface-card warning-card">
     <view class="section-title">使用边界</view>
-    <view class="body-copy">结果来自规则与输入信息推算，不是对真实容量的仪器检测。若出现异常发热、鼓包、异味、漏液或续航骤降，请停止冒险使用并咨询厂商或专业维修人员。</view>
+    <view class="body-copy">结果来自同类型电池实验模型与使用习惯估算，没有匹配模型时使用规则，不是对真实容量的仪器检测。若出现异常发热、鼓包、异味、漏液或续航骤降，请停止冒险使用并咨询厂商或专业维修人员。</view>
   </view>
 
   <view class="about-card surface-card">

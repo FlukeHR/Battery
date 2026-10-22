@@ -1,64 +1,69 @@
-# 电检通：电动车电池健康评估
+# Battery：电检通电池健康评估
 
-电检通是一个面向电动车车主和二手车商家的电池健康评估项目。用户填写电池类型、使用时间、充电习惯、驾驶方式和停放环境后，系统会生成健康度（SOH）、预计剩余寿命、风险等级、主要衰减因素和保养建议。
-
-项目同时包含一套 CALB 电芯循环数据研究管线，用于特征工程、XGBoost 基线训练和后续模型迭代。当前在线版本采用可解释的 TypeScript 规则估算，Python 模型代码作为离线研究基线。
-
-## 核心功能
-
-- 在线电池健康评估与中文结果报告
-- 微信小程序五步评估、本机历史与安全分享摘要
-- 磷酸铁锂、三元锂、铅酸等电池类型支持
-- 充电深度、等效循环、温度、负载和驾驶压力映射
-- 同一 Next.js 应用内提供页面和 API，无需单独启动后端
-- CALB 数据检查、特征工程、模型训练与评估脚本
+本仓库统一维护电检通官网、微信小程序，以及共用的电池建模与评估算法。
 
 ## 项目结构
 
 ```text
 Battery/
-├── Battest/web/           # 线上 Web 应用与预测 API（Next.js）
-│   └── src/
-│       ├── app/           # 页面与 Route Handlers
-│       ├── components/    # 表单、布局和 UI 组件
-│       └── lib/           # 在线预测与共享逻辑
-├── Battest/miniprogram/   # 微信原生 TypeScript 客户端
-│   ├── miniprogram/       # 页面、组件、服务与本地存储
-│   └── tests/             # 小程序纯函数与 API 契约测试
-├── src/                   # Python 离线数据与模型管线
-├── tests/                 # pytest 测试
-├── dataset/CALB/          # 原始循环数据
-└── data/reports/          # 数据和模型报告
+├── Battest/
+│   ├── web/                  # 官网、在线评估及共用 Next.js API
+│   └── miniprogram/          # 微信原生 TypeScript 小程序
+├── src/                      # Python 数据检查、特征提取、训练及模型导出
+├── tests/                    # Python 模型管线测试
+├── data/reports/             # 中文数据结构、特征与模型评估报告
+├── dataset/                  # 本地 CALB、HUST、MATR 原始数据，不上传
+├── models/                   # 本地 Python 训练模型，不上传
+├── AGENTS.md                 # 仓库开发规范
+└── STATUS.md                 # 当前状态与验证记录
 ```
 
-在线请求链路：
+`Battest/web` 是官网，`Battest/miniprogram` 是小程序。两端共用官网的 `/api/predict`，小程序不复制预测算法。原 FastAPI 与静态网页演示已由现有 Next.js 应用统一承接；旧实现仍保留在 Git 历史中。
 
-```text
-/assessment → /api/predict → battery-prediction.ts → JSON 评估结果
-微信小程序 → https://battest.ccwu.cc/api/predict → 同一预测实现
-```
+## 数据集与模型
 
-## 快速开始
+| 电池类型 | 训练来源 | 电芯数 | 有效循环样本数 | 在线方式 |
+|---|---|---:|---:|---|
+| 三元锂（NCM / NMC） | CALB | 27 | 2,791 | 对应 XGBoost 模型与习惯规则融合 |
+| 磷酸铁锂（LFP） | HUST + MATR | 77 + 169 | 146,120 + 140,001 | 对应 XGBoost 模型与习惯规则融合 |
+| 铅酸或不确定类型 | 暂无对应实验数据 | — | — | 明确标注为规则估算 |
 
-需要 Node.js 18+ 和 npm。
+两类模型使用相同的 21 个特征、XGBoost 参数和随机种子。按数据来源及完整电芯划分训练集与测试集，禁止同一电芯出现在两者中。SOH 为当前放电容量与首个有效循环容量之比；寿命终点为 SOH ≤ 0.80。
 
-```bash
+HUST 没有温度记录，保留这些样本，训练时只用训练集的中位数补齐。训练集整列缺失时才填零，磷酸铁锂环境温度特征属于这种情况。
+
+在线预测保持 Python 现有算法：对应 XGBoost 预测占 75%，使用习惯规则占 25%；剩余寿命继续通过使用习惯与衰减规则估算。网站读取导出的同一组回归树，不依赖 Python 运行环境或原始数据。
+
+## 官网开发
+
+安装 Node.js 18+ 后，在项目根目录运行：
+
+```powershell
 cd Battest/web
 npm ci
 npm run dev
 ```
 
-打开：
-
 - 官网：[http://localhost:3000](http://localhost:3000)
-- 在线评估：[http://localhost:3000/assessment](http://localhost:3000/assessment)
-- 健康检查：[http://localhost:3000/api/health](http://localhost:3000/api/health)
+- 电池评估：[http://localhost:3000/assessment](http://localhost:3000/assessment)
+- 服务状态：[http://localhost:3000/api/health](http://localhost:3000/api/health)
 
-当前在线应用不需要环境变量，也不需要额外启动 FastAPI 服务。
+两类在线模型的轻量文件保存在 `Battest/web/src/lib/models/`，合计约 433 KB，可随代码提交。克隆后即可启动官网，无需下载约 12.5 GB 的原始数据，也无需额外启动后端。
 
-微信小程序开发：
+生产检查与运行：
 
-```bash
+```powershell
+npm test
+npm run lint
+npm run build
+npm start
+```
+
+模型推理运行在 Next.js 服务端，官网表单仅导入响应类型，不会将模型打包进小程序。
+
+## 小程序开发
+
+```powershell
 cd Battest/miniprogram
 npm ci
 npm run typecheck
@@ -66,95 +71,62 @@ npm run lint
 npm test
 ```
 
-再使用微信开发者工具导入 `Battest/miniprogram`。真机请求前需将 `https://battest.ccwu.cc` 配置为小程序 request 合法域名，并仅在本机私有配置中填写真实 AppID。
+在微信开发者工具中导入 `Battest/miniprogram`，源码目录为 `app/`。正式预览或发布前，需在本机私有配置中填写自己的 AppID，并将 `https://battest.ccwu.cc` 配置为 request 合法域名。不得提交 AppSecret、Token、上传私钥或个人私有配置。
 
-## 生产构建
+小程序继续调用同一官网接口，支持读取化学类型、模型来源及算法版本。旧接口或历史记录没有新增字段时仍可展示。开发者工具及 iOS、Android 真机验收需由具备对应设备的人员完成。
 
-```bash
-cd Battest/web
-npm ci
-npm run build
-npm start
+## Python 研究管线
+
+原始数据只保存在本地，按以下位置放置：
+
+```text
+dataset/CALB/*.pkl
+dataset/HUST/*.pkl
+dataset/MATR/*.pkl
 ```
 
-`npm run build` 会同时执行 Next.js 编译、TypeScript 检查和页面生成。默认服务端口为 `3000`，可通过运行环境的 `PORT` 变量调整。
+使用现有 `dachuang` 环境，或安装 `requirements.txt` 后依次运行：
 
-## 部署到 Vercel
-
-通过 Vercel 导入 Git 仓库时，请将项目的 **Root Directory** 设置为 `Battest/web`，Framework Preset 选择 **Next.js**，其余构建设置保持默认。连接 Git 后，功能分支会生成预览部署，生产分支用于正式环境。
-
-也可以从应用目录使用 CLI：
-
-```bash
-cd Battest/web
-npx vercel          # 创建预览部署
-npx vercel --prod   # 部署到生产环境
+```powershell
+conda run -n dachuang python -m src.inspect_pkl
+conda run -n dachuang python -m src.run_feature_pipeline
+conda run -n dachuang python -m src.train_xgboost
+conda run -n dachuang python -m src.export_web_models
+conda run -n dachuang python -m pytest -q
 ```
 
-部署前应先在本地运行 `npm run lint && npm run build`。不要把 Vercel Token 或其他凭据提交到仓库。更多信息参见 [Vercel 部署文档](https://vercel.com/docs/deployments/overview)。
+若本机 conda 启动器不可用，可直接使用 `D:\Anaconda\envs\dachuang\python.exe` 执行相同的模块命令。
 
-## API 使用
+Python 模型分别保存在 `models/`（三元锂）和 `models/lfp/`（磷酸铁锂）。导出命令读取已训练模型，生成网站所需回归树和 Python 对照样例，不重新训练、不修改原始数据。重新训练后必须重新导出，并执行官网的 `npm test`。
 
-### `GET /api/health`
+## 模型评估结果
 
-返回在线估算引擎状态。
+| 模型 | 训练样本数 | 测试样本数 | 平均绝对误差 | 均方根误差 | 决定系数 R² |
+|---|---:|---:|---:|---:|---:|
+| CALB / 三元锂 | 2,196 | 595 | 0.005945 | 0.009101 | 0.865801 |
+| HUST + MATR / 磷酸铁锂 | 228,241 | 57,880 | 0.009408 | 0.016031 | 0.947980 |
 
-### `POST /api/predict`
+这些指标来自未参与训练的实验电芯，不代表日常用车或剩余寿命预测的实测准确性。详细结果见 `data/reports/model_report.md` 和 `data/reports/lfp/model_report.md`。
 
-```bash
-curl -X POST http://localhost:3000/api/predict \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "battery_type": "LFP",
-    "voltage": 48,
-    "capacity_ah": 20,
-    "battery_age_months": 18,
-    "charge_start_soc": 20,
-    "charge_end_soc": 90,
-    "weekly_charge_times": 4,
-    "driving_style": "normal",
-    "load_condition": "single",
-    "long_term_storage": "occasionally",
-    "city": "Chengdu",
-    "parking_environment": "indoor"
-  }'
-```
+## 接口契约
 
-响应包含 `soh_percent`、`estimated_remaining_months`、`risk_level`、`main_degradation_factors`、`suggestions` 和映射后的物理特征。无效输入返回 `400` 或 `422`。
+`GET /api/health` 返回两类模型的加载状态和训练来源。
 
-## 离线数据与模型研究
+`POST /api/predict` 接收电池类型、电压、容量、使用月数、充电起止电量、每周充电次数、驾驶习惯、负载、存放习惯、城市和停放环境。参数字段保持现有 `snake_case`；无效 JSON 返回 400，无效参数返回 422。
 
-Python 管线不参与网站运行。如需复现实验，建议使用独立虚拟环境：
+响应保留 `soh`、`soh_percent`、`estimated_remaining_months`、`estimated_remaining_years`、`risk_level`、`main_degradation_factors`、`suggestions`、`mapped_features` 和 `model_used`，并补充：
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python -m src.inspect_pkl
-python -m src.run_feature_pipeline
-python -m src.train_xgboost
-python -m pytest -q
-```
+- `battery_chemistry`：规范化后的电池化学类型。
+- `training_datasets`：实际模型训练来源；规则估算时为空。
+- `prediction_note`：模型或规则估算的说明。
+- `algorithm_version`：`xgboost-v1` 或 `rules-v1`。
 
-当前报告记录了 27 个 CALB 数据文件、2,791 条有效循环记录，以及按 `cell_id` 分组测试的 XGBoost 基线。生成的 CSV、图表和模型文件默认不提交到 Git。不要修改或删除 `dataset/CALB/` 中的原始数据。
+## 部署与版本管理
 
-## 质量检查
+官网保留原有 Vercel 配置，项目根目录仍为 `Battest/web`。网站和小程序继续共用域名及 API，不需要增加环境变量。本次整合通过功能分支审查，不直接触发正式站点发布。
 
-提交代码前运行：
-
-```bash
-python -m pytest -q
-cd Battest/web
-npm run lint
-npm run build
-cd ../miniprogram
-npm run typecheck
-npm run lint
-npm test
-```
-
-贡献约定见 [AGENTS.md](./AGENTS.md)。
+`dataset/`、`output/`、`tmp/`、依赖目录、构建缓存和 Python 模型产物不上传 Git。保留中文文档、报告、测试以及轻量在线模型。此前历史提交中的 CALB 文件不在本次整合中重写或清除。
 
 ## 使用边界
 
-评估结果依赖用户输入和实验数据映射，仅适合日常管理、初步筛查与研究展示，不能替代专业检测设备、维修结论或厂商质保流程。
+评估基于用户输入、实验模型及习惯规则，仅用于日常管理、初步筛查和研究展示，不能替代专业检测、维修判断或厂商质保。实验电芯与电动车电池组存在差异，当前输入映射和剩余寿命规则仍需真实用车数据校准。

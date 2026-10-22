@@ -30,7 +30,7 @@ battest.ccwu.cc
 
 ```text
 Battest/miniprogram/
-├── miniprogram/
+├── app/
 │   ├── app.ts / app.json / app.wxss
 │   ├── pages/
 │   │   ├── assessment/       # 分步评估
@@ -103,3 +103,7 @@ Battest/miniprogram/
 - **阶段 B**：搭建原生 TypeScript 工程，实现 P0 页面和本地状态。
 - **阶段 C**：增加版本化预测 API、契约测试与错误观测。
 - **阶段 D**：目标用户内测、隐私与备案检查、提审发布。
+
+## 模型整合说明
+
+官网服务端读取 Python 导出的同一组 XGBoost 回归树：CALB 对应三元锂，HUST + MATR 对应磷酸铁锂。小程序仍只调用共用 API，不保存模型副本。新增来源与算法说明字段兼容历史响应；原始数据仅保留在本地。

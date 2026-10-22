@@ -50,6 +50,10 @@
 
   <view class="basis-section">
     <view class="basis-title">评估依据摘要</view>
+    <view wx:if="{{report.result.training_datasets.length}}" class="basis-copy">
+      训练数据：<text wx:for="{{report.result.training_datasets}}" wx:key="*this">{{index > 0 ? '、' : ''}}{{item}}</text>
+    </view>
+    <view wx:if="{{report.result.prediction_note}}" class="basis-copy">{{report.result.prediction_note}}</view>
     <view class="basis-copy">
       {{report.battery_label}} · {{report.input.voltage}}V {{report.input.capacity_ah}}Ah · 已使用 {{report.input.battery_age_months}} 个月
     </view>

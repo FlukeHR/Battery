@@ -15,7 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 export const metadata: Metadata = {
   title: "技术与方法 · 我们如何估算电池健康度",
   description:
-    "基于 CALB 循环退化研究与用户使用特征映射的在线电池健康评估方法。",
+    "结合 CALB 三元锂、HUST 与 MATR 磷酸铁锂实验模型和使用习惯的电池健康评估方法。",
 };
 
 export default function TechnologyPage() {
@@ -30,8 +30,8 @@ export default function TechnologyPage() {
             一份诚实的「我们如何评估」说明
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            在线版本采用可解释的规则估算，将 CALB 实验室循环退化研究与用户使用习惯映射结合，
-            无需额外预测服务即可输出可复现的评估结果；XGBoost 保留为离线研究基线。
+            在线版本根据电池类型选择对应 XGBoost 模型，结合使用习惯进行估算。
+            三元锂使用 CALB 数据，磷酸铁锂使用 HUST 与 MATR 数据；暂无对应模型的类型使用规则估算。
           </p>
         </div>
       </section>
@@ -43,9 +43,9 @@ export default function TechnologyPage() {
               <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
                 <LineChart className="h-5 w-5" />
               </div>
-              <h3 className="text-lg font-semibold">CALB 循环退化基线</h3>
+              <h3 className="text-lg font-semibold">按电池类型匹配实验模型</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                从 27 个电芯文件提取 2,791 条有效循环记录，并按电芯分组划分训练集与测试集，降低同源数据泄漏。
+                从 273 个电芯提取 288,912 条有效循环记录，并在每个数据来源内部按完整电芯划分训练集与测试集。
               </p>
             </CardContent>
           </Card>
@@ -67,7 +67,7 @@ export default function TechnologyPage() {
               </div>
               <h3 className="text-lg font-semibold">可解释的在线评分</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                按日历老化、循环损耗、温度、驾驶和负载压力估算 SOH，并同步给出影响因素与使用建议。
+                同类型 XGBoost 预测与使用习惯规则按 75% 和 25% 融合，并给出衰减因素与使用建议。
               </p>
             </CardContent>
           </Card>
@@ -80,11 +80,11 @@ export default function TechnologyPage() {
             <CardContent className="p-7">
               <div className="mb-4 inline-flex items-center gap-2 text-primary">
                 <Database className="h-5 w-5" />
-                <span className="text-sm font-medium">CALB 实验数据</span>
+                <span className="text-sm font-medium">CALB · HUST · MATR 实验数据</span>
               </div>
               <h3 className="text-lg font-semibold">真实充放电循环特征</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                使用容量、充放电时间、温度、电压、电流、DOD 与循环位置等特征训练 XGBoost 基线。
+                使用充放电时间、温度、电压、电流、充放电深度与循环位置等特征训练模型，容量用于计算 SOH 标签。HUST 缺失温度时使用训练集默认值。
               </p>
             </CardContent>
           </Card>
@@ -109,14 +109,14 @@ export default function TechnologyPage() {
             {
               icon: GitBranch,
               tag: "当前在线",
-              title: "规则估算模型",
-              desc: "直接在网站 API 内依据日历老化、等效循环与使用压力完成评估，部署简单且结果可解释。",
+              title: "同类型模型与习惯规则融合",
+              desc: "官网和小程序共用预测 API，使用同类型实验模型；铅酸和不确定类型明确标注为规则估算。",
             },
             {
               icon: GitBranch,
               tag: "离线基线",
               title: "XGBoost 实验模型",
-              desc: "按电芯分组测试的基线 R² 为 0.866、MAE 为 0.0059，用于研究比较与后续在线模型校准。",
+              desc: "实验测试集上，三元锂 R² 为 0.866、MAE 为 0.0059；磷酸铁锂 R² 为 0.948、MAE 为 0.0094。这些指标不代表实际用车预测准确性。",
             },
             {
               icon: GitBranch,

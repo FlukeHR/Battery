@@ -1,10 +1,27 @@
-# XGBoost Baseline Report
+# XGBoost 基线模型报告
 
-- Train rows: 2196
-- Test rows: 595
-- MAE: 0.005945
-- RMSE: 0.009101
-- R2: 0.865801
-- Split: grouped by `cell_id` to reduce same-cell leakage
-- Model: `models/xgboost_model.pkl`
-- Metadata: `models/model_metadata.json`
+- 电池化学类型： NCM
+- 训练数据集： CALB
+- 训练样本数： 2196
+- 测试样本数： 595
+- 平均绝对误差（MAE）： 0.005945
+- 均方根误差（RMSE）： 0.009101
+- 决定系数（R²）： 0.865801
+- 划分方式：按 `cell_id` 分组，避免同一电芯进入训练集和测试集
+- 模型文件： `D:\code\大创\models\xgboost_model.pkl`
+- 元数据文件： `D:\code\大创\models\model_metadata.json`
+- 缺失特征：使用训练集中位数填补；训练集整列缺失时填零
+
+## 各来源数据集的测试指标
+
+以下指标基于未参与训练的电芯，JSON 键名与程序中的指标名保持一致。
+
+```json
+{
+  "CALB": {
+    "mae": 0.005944617168718285,
+    "rmse": 0.009101111709726483,
+    "r2": 0.865801424825099
+  }
+}
+```

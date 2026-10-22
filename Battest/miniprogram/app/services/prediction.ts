@@ -79,6 +79,11 @@ export function adaptPredictionResult(value: unknown): PredictionResult {
     result.algorithm_version = value.algorithm_version;
   }
   if (typeof value.generated_at === "string") result.generated_at = value.generated_at;
+  if (typeof value.battery_chemistry === "string") result.battery_chemistry = value.battery_chemistry;
+  if (typeof value.prediction_note === "string") result.prediction_note = value.prediction_note;
+  if (value.training_datasets !== undefined) {
+    result.training_datasets = stringArrayField(value, "training_datasets");
+  }
 
   if (result.soh_percent < 0 || result.soh_percent > 100) {
     throw new PredictionServiceError("invalid_response", "健康度超出有效范围。");

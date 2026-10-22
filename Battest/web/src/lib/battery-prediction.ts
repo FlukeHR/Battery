@@ -1,3 +1,5 @@
+import { chemistryModels, predictXGBoost } from "./xgboost";
+
 export type RiskLevel = "low" | "medium" | "high";
 
 export interface PredictionInput {
@@ -25,6 +27,10 @@ export interface PredictionResult {
   suggestions: string[];
   mapped_features: Record<string, number>;
   model_used: boolean;
+  battery_chemistry: string;
+  training_datasets: string[];
+  prediction_note: string;
+  algorithm_version: string;
 }
 
 type BatteryKey = "lfp" | "ncm" | "lead_acid" | "unknown";
@@ -180,7 +186,10 @@ function clamp(value: number, minimum: number, maximum: number) {
 
 function roundTo(value: number, digits: number) {
   const factor = 10 ** digits;
-  return Math.round((value + Number.EPSILON) * factor) / factor;
+  const scaled = value * factor;
+  const lower = Math.floor(scaled);
+  // Python 的 round 在恰好一半时取偶数，例如 3 个月 / 12 = 0.25 年取 0.2。
+  return (scaled - lower === 0.5 ? lower + (lower % 2) : Math.round(scaled)) / factor;
 }
 
 function normalize(value: string) {
@@ -358,22 +367,38 @@ function remainingMonths(soh: number, features: UserFeatures) {
     0.0015
   );
 
-  return Math.max(Math.round((soh - EOL_SOH) / monthlyLoss), 0);
+  return Math.max(roundTo((soh - EOL_SOH) / monthlyLoss, 0), 0);
 }
 
-/**
- * Online inference used by the unified Next.js application.
- * The XGBoost training pipeline remains in the repository for offline research;
- * the browser-facing runtime uses this deterministic, explainable estimator.
- */
+/** 官网和小程序共用的预测入口，使用 Python 训练后导出的同一组回归树。 */
 export function predictFromUserInput(input: PredictionInput): PredictionResult {
   const features = estimateUserFeatures(input);
-  const soh = heuristicSoh(features);
+  const chemistry = batteryKey(input.battery_type);
+  const model = chemistryModels[chemistry];
+  let soh = heuristicSoh(features);
+  if (model) {
+    const modelInput = {
+      ...model.defaults,
+      cycle_index: features.estimatedCyclesElapsed,
+      cycle_position: features.estimatedCyclesElapsed,
+      nominal_capacity_in_Ah: input.capacity_ah,
+      DOD: features.singleChargeDod,
+      DOC: features.singleChargeDod,
+      temperature_mean: features.estimatedTemperature,
+      temperature_max: features.estimatedTemperature + 4,
+      ambient_temperature_in_C: features.estimatedTemperature,
+      C_rate: features.estimatedCRate,
+      current_abs_mean: features.estimatedCRate * input.capacity_ah,
+      current_abs_max: features.estimatedCRate * input.capacity_ah * 1.5,
+    };
+    const modelSoh = clamp(predictXGBoost(model, modelInput), 0.55, 1);
+    soh = clamp(0.75 * modelSoh + 0.25 * soh, 0.55, 1);
+  }
   const months = remainingMonths(soh, features);
 
   return {
     soh: roundTo(soh, 4),
-    soh_percent: Math.round(soh * 100),
+    soh_percent: roundTo(soh * 100, 0),
     estimated_remaining_months: months,
     estimated_remaining_years: roundTo(months / 12, 1),
     risk_level: riskLevelFromSoh(soh),
@@ -390,6 +415,12 @@ export function predictFromUserInput(input: PredictionInput): PredictionResult {
       stress_factor: roundTo(features.stressFactor, 3),
       nominal_cycle_life: Math.round(features.nominalCycleLife),
     },
-    model_used: false,
+    model_used: Boolean(model),
+    battery_chemistry: chemistry,
+    training_datasets: model?.training_datasets ?? [],
+    prediction_note: model
+      ? "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
+      : "暂无匹配该电池类型的训练数据，当前使用习惯规则估算。",
+    algorithm_version: model ? "xgboost-v1" : "rules-v1",
   };
 }

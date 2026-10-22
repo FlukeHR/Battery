@@ -102,6 +102,8 @@ MVP 调用 `POST https://battest.ccwu.cc/api/predict`，字段与网站保持一
 - `suggestions`
 - `model_used`
 
+兼容扩展字段：`battery_chemistry`（电池化学类型）、`training_datasets`（实际训练来源）、`prediction_note`（估算方式说明）和 `algorithm_version`（算法版本）。新接口按类型使用 CALB 三元锂模型或 HUST + MATR 磷酸铁锂模型；铅酸及不确定类型仍为规则估算。小程序展示接口返回的数据来源，不复制模型。
+
 正式发布前建议增加版本化端点 `/api/v1/predictions`，并补充 `request_id`、`algorithm_version`、`generated_at`。小程序只依赖公开响应字段，不直接依赖 `mapped_features` 内部实现。
 
 ## 7. 状态与异常

@@ -33,6 +33,9 @@ export interface PredictionResult {
   request_id?: string;
   algorithm_version?: string;
   generated_at?: string;
+  battery_chemistry?: string;
+  training_datasets?: string[];
+  prediction_note?: string;
 }
 
 export interface StoredReport {

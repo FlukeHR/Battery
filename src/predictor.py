@@ -19,21 +19,33 @@ class ModelBundle:
     feature_columns: list[str]
     defaults: dict[str, float]
     metrics: dict[str, float]
+    battery_chemistry: str = "ncm"
+    training_datasets: tuple[str, ...] = ("CALB",)
 
 
-def load_model_bundle(model_dir: str | Path = MODEL_DIR) -> ModelBundle | None:
+def load_model_bundle(
+    model_dir: str | Path = MODEL_DIR, battery_chemistry: str = "ncm",
+) -> ModelBundle | None:
+    if battery_chemistry not in {"ncm", "lfp"}:
+        return None
     directory = Path(model_dir)
+    if battery_chemistry == "lfp":
+        directory = directory / "lfp"
     model_path = directory / "xgboost_model.pkl"
     metadata_path = directory / "model_metadata.json"
     if not model_path.exists() or not metadata_path.exists():
         return None
-    model = joblib.load(model_path)
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    if metadata.get("battery_chemistry", "ncm") != battery_chemistry:
+        return None
+    model = joblib.load(model_path)
     return ModelBundle(
         model=model,
         feature_columns=list(metadata["feature_columns"]),
         defaults={key: float(value) for key, value in metadata["defaults"].items()},
         metrics={key: float(value) for key, value in metadata.get("metrics", {}).items()},
+        battery_chemistry=battery_chemistry,
+        training_datasets=tuple(metadata.get("training_datasets", ["CALB"])),
     )
 
 
@@ -107,8 +119,11 @@ def predict_from_user_input(
     model_bundle: ModelBundle | None = None,
 ) -> dict[str, Any]:
     user_features = estimate_user_features(payload)
+    chemistry = user_features["battery_chemistry"]
     if model_bundle is None:
-        model_bundle = load_model_bundle()
+        model_bundle = load_model_bundle(battery_chemistry=chemistry)
+    if model_bundle is not None and model_bundle.battery_chemistry != chemistry:
+        model_bundle = None
 
     model_soh: float | None = None
     if model_bundle is not None:
@@ -119,6 +134,13 @@ def predict_from_user_input(
     soh = model_soh if model_soh is not None else heuristic_soh
     if model_soh is not None:
         soh = float(np.clip(0.75 * model_soh + 0.25 * heuristic_soh, 0.55, 1.0))
+
+    if model_bundle is not None:
+        note = "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
+    elif chemistry in {"ncm", "lfp"}:
+        note = "该类型模型尚未加载，当前使用习惯规则估算。"
+    else:
+        note = "暂无匹配该电池类型的训练数据，当前使用习惯规则估算。"
 
     return {
         "soh": round(soh, 4),
@@ -139,4 +161,7 @@ def predict_from_user_input(
             "nominal_cycle_life": round(float(user_features["nominal_cycle_life"]), 0),
         },
         "model_used": model_bundle is not None,
+        "battery_chemistry": chemistry,
+        "training_datasets": list(model_bundle.training_datasets) if model_bundle is not None else [],
+        "prediction_note": note,
     }

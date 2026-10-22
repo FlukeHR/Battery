@@ -8,8 +8,8 @@ from typing import Any
 
 import numpy as np
 
-from src.config import RAW_DATA_DIR, REPORTS_DIR
-from src.data_loader import iter_cell_pickles, load_pickle
+from src.config import DATASET_CHEMISTRIES, RAW_DATA_DIR, REPORTS_DIR
+from src.data_loader import find_pickle_files, load_pickle
 
 
 def _preview_value(value: Any) -> str:
@@ -26,6 +26,8 @@ def inspect_pkl(path: str | Path) -> dict[str, Any]:
     report: dict[str, Any] = {
         "file": str(path),
         "data_type": type(data).__name__,
+        "dataset": Path(path).parent.name,
+        "battery_chemistry": DATASET_CHEMISTRIES.get(Path(path).parent.name),
     }
     if isinstance(data, dict):
         report["top_level_keys"] = list(data.keys())
@@ -55,12 +57,13 @@ def inspect_dataset(raw_dir: str | Path = RAW_DATA_DIR) -> dict[str, Any]:
     cycle_key_counter: Counter[str] = Counter()
     cycle_counts = []
 
-    for path, data in iter_cell_pickles(raw_dir):
+    for path in find_pickle_files(raw_dir):
         report = inspect_pkl(path)
         file_reports.append(report)
         top_key_counter.update(report.get("top_level_keys", []))
         cycle_key_counter.update(report.get("cycle_keys", []))
         cycle_counts.append(report.get("cycle_count", 0))
+        print(f"Inspected {path.name}: {report.get('cycle_count', 0)} cycles", flush=True)
 
     return {
         "file_count": len(file_reports),
@@ -70,6 +73,7 @@ def inspect_dataset(raw_dir: str | Path = RAW_DATA_DIR) -> dict[str, Any]:
         "top_level_key_frequency": dict(top_key_counter),
         "cycle_key_frequency": dict(cycle_key_counter),
         "files": file_reports,
+        "datasets": dict(Counter(report["dataset"] for report in file_reports)),
     }
 
 
@@ -77,39 +81,41 @@ def write_markdown_report(report: dict[str, Any], output_path: str | Path) -> Pa
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [
-        "# CALB Data Structure Report",
+        "# 电池数据结构报告",
         "",
-        "## Dataset Summary",
+        "## 数据集概况",
         "",
-        f"- Pickle files: {report['file_count']}",
-        f"- Total cycles: {report['cycle_count_total']}",
-        f"- Cycles per cell: {report['cycle_count_min']} to {report['cycle_count_max']}",
+        f"- Pickle 文件数量：{report['file_count']}",
+        f"- 总循环数：{report['cycle_count_total']}",
+        f"- 单电芯循环数范围：{report['cycle_count_min']} 至 {report['cycle_count_max']}",
+        f"- 各数据集文件数量：{report['datasets']}",
         "",
-        "## Top-Level Keys",
+        "## 顶层字段",
         "",
     ]
-    lines.extend(f"- `{key}`: {count} files" for key, count in report["top_level_key_frequency"].items())
-    lines.extend(["", "## Cycle Keys", ""])
-    lines.extend(f"- `{key}`: {count} files" for key, count in report["cycle_key_frequency"].items())
-    lines.extend(["", "## File Details", ""])
+    lines.extend(f"- `{key}`：{count} 个文件" for key, count in report["top_level_key_frequency"].items())
+    lines.extend(["", "## 循环数据字段", ""])
+    lines.extend(f"- `{key}`：{count} 个文件" for key, count in report["cycle_key_frequency"].items())
+    lines.extend(["", "## 文件详情", ""])
     for file_report in report["files"]:
         lines.extend(
             [
                 f"### {Path(file_report['file']).name}",
                 "",
-                f"- Data type: `{file_report['data_type']}`",
-                f"- Cycle count: {file_report.get('cycle_count', 0)}",
-                f"- Cycle keys: {', '.join(f'`{key}`' for key in file_report.get('cycle_keys', []))}",
+                f"- 数据类型：`{file_report['data_type']}`",
+                f"- 循环数量：{file_report.get('cycle_count', 0)}",
+                f"- 循环字段：{', '.join(f'`{key}`' for key in file_report.get('cycle_keys', []))}",
                 "",
             ]
         )
-    lines.extend(["## Machine-Readable Summary", "", "```json", json.dumps(report, indent=2), "```", ""])
+    lines.extend(["## 机器可读摘要", "", "字段名、类型名和原始数据预览保留原始标识，便于程序读取和核对。",
+                  "", "```json", json.dumps(report, indent=2, ensure_ascii=False), "```", ""])
     path.write_text("\n".join(lines), encoding="utf-8")
     return path
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Inspect CALB pickle files.")
+    parser = argparse.ArgumentParser(description="Inspect CALB, HUST and MATR pickle files.")
     parser.add_argument("--raw-dir", default=str(RAW_DATA_DIR))
     parser.add_argument("--output", default=str(REPORTS_DIR / "data_structure_report.md"))
     args = parser.parse_args()

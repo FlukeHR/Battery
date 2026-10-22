@@ -4,13 +4,17 @@ import pickle
 from pathlib import Path
 from typing import Any, Iterator
 
+from src.config import DATASET_CHEMISTRIES
+
 
 def find_pickle_files(raw_dir: str | Path) -> list[Path]:
-    """Return sorted CALB pickle files from a directory."""
+    """Read a single dataset or the supported dataset directories."""
     path = Path(raw_dir)
     if not path.exists():
         raise FileNotFoundError(f"Raw data directory not found: {path}")
     files = sorted(path.glob("*.pkl"))
+    if not files:
+        files = sorted(file for name in DATASET_CHEMISTRIES for file in (path / name).glob("*.pkl"))
     if not files:
         raise FileNotFoundError(f"No .pkl files found in {path}")
     return files

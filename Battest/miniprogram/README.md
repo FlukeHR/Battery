@@ -45,12 +45,12 @@ npm test
 
 ## 目录说明
 
-- `miniprogram/pages/`：评估、结果、记录和关于页面。
-- `miniprogram/components/`：步骤、风险标签和报告卡片。
-- `miniprogram/services/`：预测 API、超时、提交锁和响应适配。
-- `miniprogram/stores/`：草稿、临时结果与本地历史。
-- `miniprogram/types/`：API 和页面共享类型。
-- `miniprogram/utils/`：校验与展示纯函数。
+- `app/pages/`：评估、结果、记录和关于页面。
+- `app/components/`：步骤、风险标签和报告卡片。
+- `app/services/`：预测 API、超时、提交锁和响应适配。
+- `app/stores/`：草稿、临时结果与本地历史。
+- `app/types/`：API 和页面共享类型。
+- `app/utils/`：校验与展示纯函数。
 - `tests/`：校验、API 契约、历史淘汰和风险文案测试。
 
 ## 发布前人工验收

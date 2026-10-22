@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "tsc --target ES2021 --lib ES2021,DOM --module commonjs --esModuleInterop --resolveJsonModule --outDir .test-build src/lib/battery-prediction.ts src/lib/xgboost.ts && node --test tests/prediction.test.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
