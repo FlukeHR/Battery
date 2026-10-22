@@ -1,0 +1,37 @@
+<view class="history-page page-shell">
+  <view class="history-header">
+    <view>
+      <view class="eyebrow">本机报告</view>
+      <view class="page-title">评估记录</view>
+      <view class="page-subtitle">最近 20 份报告仅保存在本机，不会自动同步到其他设备。</view>
+    </view>
+    <button wx:if="{{reports.length}}" class="clear-link" bindtap="onClearHistory">清空</button>
+  </view>
+
+  <view wx:if="{{reports.length}}" class="report-list">
+    <view wx:for="{{reports}}" wx:key="id" class="history-card surface-card">
+      <view class="card-main" data-id="{{item.id}}" bindtap="onOpenReport">
+        <view class="card-topline">
+          <view class="scenario-chip">{{item.scenario_label}}</view>
+          <risk-badge risk-level="{{item.result.risk_level}}" />
+        </view>
+        <view class="score-line">
+          <view class="history-score">{{item.result.soh_percent}}<text>%</text></view>
+          <view class="history-arrow">›</view>
+        </view>
+        <view class="battery-summary">{{item.battery_label}} · {{item.input.voltage}}V {{item.input.capacity_ah}}Ah · 使用 {{item.input.battery_age_months}} 个月</view>
+        <view class="history-meta">{{item.created_at_label}} · 预计剩余 {{item.result.estimated_remaining_months}} 个月</view>
+      </view>
+      <button class="delete-link" data-id="{{item.id}}" catchtap="onDeleteReport">删除</button>
+    </view>
+  </view>
+
+  <view wx:else class="surface-card empty-state">
+    <view class="empty-icon">▱</view>
+    <view class="section-title">还没有评估记录</view>
+    <view class="page-subtitle">完成评估并点击“保存到本机”后，报告会出现在这里。</view>
+    <button class="primary-button empty-action" bindtap="onStartAssessment">开始第一次评估</button>
+  </view>
+
+  <view wx:if="{{reports.length}}" class="storage-note">卸载微信、清理缓存或更换设备后，本机记录可能丢失。</view>
+</view>

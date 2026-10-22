@@ -1,0 +1,4 @@
+{
+  "desc": "电检通页面索引规则",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

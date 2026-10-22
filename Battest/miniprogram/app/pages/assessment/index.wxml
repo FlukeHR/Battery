@@ -1,0 +1,158 @@
+<view class="assessment-page page-shell">
+  <view class="hero">
+    <view class="eyebrow">电池健康辅助评估</view>
+    <view class="page-title">三分钟，了解电池状态</view>
+    <view class="page-subtitle">根据规格和日常习惯生成可解释的辅助评估，不需要登录，也不读取设备信息。</view>
+    <view class="promise-row">
+      <view class="promise-item"><text>✓</text>约 3 分钟</view>
+      <view class="promise-item"><text>✓</text>本机保存</view>
+      <view class="promise-item"><text>✓</text>随时可清除</view>
+    </view>
+  </view>
+
+  <view class="progress-wrap" aria-label="第 {{step + 1}} 步，共 5 步">
+    <view wx:for="{{stepMarkers}}" wx:key="*this" class="progress-segment {{item <= step ? 'is-active' : ''}}" />
+    <view class="progress-label">{{step + 1}} / 5</view>
+  </view>
+
+  <form-step step-number="1" title="选择评估场景" description="场景只影响报告引导，不会改变算法结果" active="{{step === 0}}">
+    <view class="scenario-list">
+      <view
+        wx:for="{{scenarios}}"
+        wx:key="value"
+        class="scenario-card {{draft.scenario === item.value ? 'is-selected' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onScenarioSelect"
+      >
+        <view class="scenario-icon">{{item.icon}}</view>
+        <view class="scenario-copy">
+          <view class="scenario-title">{{item.title}}</view>
+          <view class="scenario-description">{{item.description}}</view>
+        </view>
+        <view class="radio-dot"><view wx:if="{{draft.scenario === item.value}}" /></view>
+      </view>
+    </view>
+  </form-step>
+
+  <form-step step-number="2" title="电池基础信息" description="不知道电池类型时可选择“不确定”" active="{{step === 1}}">
+    <view class="field-group">
+      <view class="field-label">电池类型</view>
+      <picker range="{{batteryTypes}}" range-key="label" value="{{pickerIndexes.battery_type}}" data-field="battery_type" bindchange="onChoiceChange">
+        <view class="picker-field">{{batteryTypes[pickerIndexes.battery_type].label}}<text>⌄</text></view>
+      </picker>
+    </view>
+    <view class="field-row">
+      <view class="field-group field-half">
+        <view class="field-label">额定电压</view>
+        <picker range="{{voltages}}" range-key="label" value="{{pickerIndexes.voltage}}" data-field="voltage" bindchange="onChoiceChange">
+          <view class="picker-field">{{voltages[pickerIndexes.voltage].label}}<text>⌄</text></view>
+        </picker>
+      </view>
+      <view class="field-group field-half">
+        <view class="field-label">标称容量</view>
+        <picker range="{{capacities}}" range-key="label" value="{{pickerIndexes.capacity_ah}}" data-field="capacity_ah" bindchange="onChoiceChange">
+          <view class="picker-field">{{capacities[pickerIndexes.capacity_ah].label}}<text>⌄</text></view>
+        </picker>
+      </view>
+    </view>
+    <view class="field-group">
+      <view class="field-label">已使用月份</view>
+      <view class="input-shell">
+        <input type="number" value="{{draft.battery_age_months}}" maxlength="3" bindinput="onAgeInput" />
+        <text>个月</text>
+      </view>
+      <view class="field-help">请输入 0–240 的整数</view>
+    </view>
+  </form-step>
+
+  <form-step step-number="3" title="充电习惯" description="请按近三个月最常见的情况填写" active="{{step === 2}}">
+    <view class="field-row">
+      <view class="field-group field-half">
+        <view class="field-label">通常从多少电开始充</view>
+        <picker range="{{chargeStartLevels}}" range-key="label" value="{{pickerIndexes.charge_start_soc}}" data-field="charge_start_soc" bindchange="onChoiceChange">
+          <view class="picker-field">{{chargeStartLevels[pickerIndexes.charge_start_soc].label}}<text>⌄</text></view>
+        </picker>
+      </view>
+      <view class="field-group field-half">
+        <view class="field-label">通常充到多少电</view>
+        <picker range="{{chargeEndLevels}}" range-key="label" value="{{pickerIndexes.charge_end_soc}}" data-field="charge_end_soc" bindchange="onChoiceChange">
+          <view class="picker-field">{{chargeEndLevels[pickerIndexes.charge_end_soc].label}}<text>⌄</text></view>
+        </picker>
+      </view>
+    </view>
+    <view class="charge-visual">
+      <view class="charge-line">
+        <view class="charge-fill" style="left: {{draft.charge_start_soc}}%; right: {{100 - draft.charge_end_soc}}%;" />
+        <view class="charge-point start" style="left: {{draft.charge_start_soc}}%;">{{draft.charge_start_soc}}%</view>
+        <view class="charge-point end" style="right: {{100 - draft.charge_end_soc}}%;">{{draft.charge_end_soc}}%</view>
+      </view>
+    </view>
+    <view class="field-group">
+      <view class="field-label">每周充电次数</view>
+      <picker range="{{weeklyChargeTimes}}" range-key="label" value="{{pickerIndexes.weekly_charge_times}}" data-field="weekly_charge_times" bindchange="onChoiceChange">
+        <view class="picker-field">{{weeklyChargeTimes[pickerIndexes.weekly_charge_times].label}}<text>⌄</text></view>
+      </picker>
+    </view>
+  </form-step>
+
+  <form-step step-number="4" title="使用与环境" description="环境与负载会影响电池老化速度" active="{{step === 3}}">
+    <view class="field-group">
+      <view class="field-label">驾驶习惯</view>
+      <picker range="{{drivingStyles}}" range-key="label" value="{{pickerIndexes.driving_style}}" data-field="driving_style" bindchange="onChoiceChange">
+        <view class="picker-field">{{drivingStyles[pickerIndexes.driving_style].label}}<text>⌄</text></view>
+      </picker>
+    </view>
+    <view class="field-group">
+      <view class="field-label">负载情况</view>
+      <picker range="{{loadConditions}}" range-key="label" value="{{pickerIndexes.load_condition}}" data-field="load_condition" bindchange="onChoiceChange">
+        <view class="picker-field">{{loadConditions[pickerIndexes.load_condition].label}}<text>⌄</text></view>
+      </picker>
+    </view>
+    <view class="field-group">
+      <view class="field-label">长期存放频率</view>
+      <picker range="{{storageFrequencies}}" range-key="label" value="{{pickerIndexes.long_term_storage}}" data-field="long_term_storage" bindchange="onChoiceChange">
+        <view class="picker-field">{{storageFrequencies[pickerIndexes.long_term_storage].label}}<text>⌄</text></view>
+      </picker>
+    </view>
+    <view class="field-row">
+      <view class="field-group field-half">
+        <view class="field-label">所在城市</view>
+        <picker range="{{cities}}" range-key="label" value="{{pickerIndexes.city}}" data-field="city" bindchange="onChoiceChange">
+          <view class="picker-field">{{cities[pickerIndexes.city].label}}<text>⌄</text></view>
+        </picker>
+      </view>
+      <view class="field-group field-half">
+        <view class="field-label">停放环境</view>
+        <picker range="{{parkingEnvironments}}" range-key="label" value="{{pickerIndexes.parking_environment}}" data-field="parking_environment" bindchange="onChoiceChange">
+          <view class="picker-field">{{parkingEnvironments[pickerIndexes.parking_environment].label}}<text>⌄</text></view>
+        </picker>
+      </view>
+    </view>
+  </form-step>
+
+  <form-step step-number="5" title="确认评估信息" description="提交前请快速核对，不准确的信息会影响参考价值" active="{{step === 4}}">
+    <view class="summary-list">
+      <view wx:for="{{summaryItems}}" wx:key="label" class="summary-row">
+        <text>{{item.label}}</text><text>{{item.value}}</text>
+      </view>
+    </view>
+    <view class="boundary-note">
+      <view class="boundary-icon">i</view>
+      <view>评估基于规则与使用信息推算，不能测得真实容量，也不代替维修或安全鉴定。</view>
+    </view>
+  </form-step>
+
+  <view wx:if="{{fieldError}}" class="error-banner" role="alert">
+    <text>!</text><view>{{fieldError}}</view>
+  </view>
+
+  <view class="action-row">
+    <button wx:if="{{step > 0}}" class="secondary-button back-button" disabled="{{isSubmitting}}" bindtap="onPrevious">上一步</button>
+    <button wx:if="{{step < 4}}" class="primary-button next-button" bindtap="onNext">继续</button>
+    <button wx:else class="primary-button next-button" loading="{{isSubmitting}}" disabled="{{isSubmitting}}" bindtap="onSubmit">
+      {{isSubmitting ? '正在生成评估…' : '生成健康报告'}}
+    </button>
+  </view>
+
+  <view class="privacy-footnote">输入仅用于本次评估；报告默认保存在本机，最多 20 份。</view>
+</view>

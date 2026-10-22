@@ -1,0 +1,41 @@
+<view class="about-page page-shell">
+  <view class="about-hero">
+    <view class="brand-mark">⚡</view>
+    <view class="eyebrow">关于电检通</view>
+    <view class="page-title">让电池状态更容易理解</view>
+    <view class="page-subtitle">电检通面向两轮电动车车主，提供基于使用信息的电池健康辅助评估。</view>
+  </view>
+
+  <view class="about-card surface-card">
+    <view class="section-title">我们如何评估</view>
+    <view class="body-copy">小程序将电池规格、使用时长、充电区间、负载和环境等信息发送至电检通预测服务，由服务端返回健康度、剩余寿命和可解释建议。</view>
+    <view class="method-flow">
+      <view><text>01</text><view>填写日常信息</view></view>
+      <view class="flow-arrow">→</view>
+      <view><text>02</text><view>服务端估算</view></view>
+      <view class="flow-arrow">→</view>
+      <view><text>03</text><view>生成辅助报告</view></view>
+    </view>
+  </view>
+
+  <view class="about-card surface-card">
+    <view class="section-title">数据与隐私</view>
+    <view class="bullet-row"><text>✓</text><view>首版无需微信登录，不采集手机号、头像或精确位置。</view></view>
+    <view class="bullet-row"><text>✓</text><view>评估记录仅保存在本机，最多 20 份，可随时删除或清空。</view></view>
+    <view class="bullet-row"><text>✓</text><view>分享摘要不包含完整电池输入或个人使用习惯。</view></view>
+    <view class="privacy-note">卸载微信、清理缓存或更换设备后，本地记录可能丢失。</view>
+  </view>
+
+  <view class="about-card surface-card warning-card">
+    <view class="section-title">使用边界</view>
+    <view class="body-copy">结果来自同类型电池实验模型与使用习惯估算，没有匹配模型时使用规则，不是对真实容量的仪器检测。若出现异常发热、鼓包、异味、漏液或续航骤降，请停止冒险使用并咨询厂商或专业维修人员。</view>
+  </view>
+
+  <view class="about-card surface-card">
+    <view class="section-title">反馈与帮助</view>
+    <view class="body-copy">遇到问题或希望参与内测，可复制官网联系页面，在浏览器中打开。</view>
+    <button class="secondary-button feedback-button" bindtap="onCopyWebsite">复制联系页面网址</button>
+  </view>
+
+  <view class="version">电检通小程序 V0.1 · 辅助评估，不代替专业检测</view>
+</view>

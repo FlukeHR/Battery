@@ -1,0 +1,1 @@
+<view class="risk-badge {{className}}">{{label}}</view>

@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "risk-badge": "/components/risk-badge/index"
+  }
+}

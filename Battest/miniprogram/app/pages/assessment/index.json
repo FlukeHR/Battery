@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "电池评估",
+  "usingComponents": {
+    "form-step": "/components/form-step/index"
+  }
+}

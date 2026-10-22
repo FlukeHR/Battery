@@ -1,0 +1,570 @@
+[
+  {
+    "input": {
+      "battery_type": "NCM",
+      "voltage": 48,
+      "capacity_ah": 20,
+      "battery_age_months": 0,
+      "charge_start_soc": 20,
+      "charge_end_soc": 90,
+      "weekly_charge_times": 4,
+      "city": "Chengdu",
+      "driving_style": "normal",
+      "load_condition": "single",
+      "long_term_storage": "occasionally",
+      "parking_environment": "indoor"
+    },
+    "model_features": {
+      "cycle_index": 0.0,
+      "cycle_position": 0.0,
+      "nominal_capacity_in_Ah": 20.0,
+      "DOD": 0.7,
+      "DOC": 0.7,
+      "ambient_temperature_in_C": 24.0,
+      "voltage_mean": 3.921492857142857,
+      "voltage_std": 0.3674770915882555,
+      "voltage_min": 2.7489,
+      "voltage_max": 4.3498,
+      "current_mean": 0.24844818181818004,
+      "current_std": 45.10300975522486,
+      "current_min": -58.02951,
+      "current_max": 69.61185,
+      "current_abs_mean": 4.0,
+      "current_abs_max": 6.0,
+      "temperature_mean": 24.0,
+      "temperature_max": 28.0,
+      "charge_time": 6530.0,
+      "discharge_time": 3643.5,
+      "C_rate": 0.2
+    },
+    "raw_prediction": 0.9979720711708069,
+    "expected": {
+      "soh": 0.9985,
+      "soh_percent": 100,
+      "estimated_remaining_months": 69,
+      "estimated_remaining_years": 5.8,
+      "risk_level": "low",
+      "main_degradation_factors": [
+        "Normal calendar and cycle aging"
+      ],
+      "suggestions": [
+        "Keep regular 20%-90% charging habits and avoid extreme temperatures."
+      ],
+      "mapped_features": {
+        "single_charge_dod": 0.7,
+        "daily_dod": 0.7,
+        "weekly_charge_times": 4.0,
+        "annual_equivalent_cycles": 145.6,
+        "temperature_factor": 1.0,
+        "estimated_c_rate": 0.2,
+        "stress_factor": 1.0,
+        "nominal_cycle_life": 1500.0
+      },
+      "model_used": true,
+      "battery_chemistry": "ncm",
+      "training_datasets": [
+        "CALB"
+      ],
+      "prediction_note": "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
+    }
+  },
+  {
+    "input": {
+      "battery_type": "NCM",
+      "voltage": 48,
+      "capacity_ah": 20,
+      "battery_age_months": 18,
+      "charge_start_soc": 20,
+      "charge_end_soc": 90,
+      "weekly_charge_times": 4,
+      "city": "Chengdu",
+      "driving_style": "normal",
+      "load_condition": "single",
+      "long_term_storage": "occasionally",
+      "parking_environment": "indoor"
+    },
+    "model_features": {
+      "cycle_index": 218.39999999999998,
+      "cycle_position": 218.39999999999998,
+      "nominal_capacity_in_Ah": 20.0,
+      "DOD": 0.7,
+      "DOC": 0.7,
+      "ambient_temperature_in_C": 24.0,
+      "voltage_mean": 3.921492857142857,
+      "voltage_std": 0.3674770915882555,
+      "voltage_min": 2.7489,
+      "voltage_max": 4.3498,
+      "current_mean": 0.24844818181818004,
+      "current_std": 45.10300975522486,
+      "current_min": -58.02951,
+      "current_max": 69.61185,
+      "current_abs_mean": 4.0,
+      "current_abs_max": 6.0,
+      "temperature_mean": 24.0,
+      "temperature_max": 28.0,
+      "charge_time": 6530.0,
+      "discharge_time": 3643.5,
+      "C_rate": 0.2
+    },
+    "raw_prediction": 0.8901980519294739,
+    "expected": {
+      "soh": 0.8988,
+      "soh_percent": 90,
+      "estimated_remaining_months": 12,
+      "estimated_remaining_years": 1.0,
+      "risk_level": "low",
+      "main_degradation_factors": [
+        "Normal calendar and cycle aging"
+      ],
+      "suggestions": [
+        "Keep regular 20%-90% charging habits and avoid extreme temperatures."
+      ],
+      "mapped_features": {
+        "single_charge_dod": 0.7,
+        "daily_dod": 0.7,
+        "weekly_charge_times": 4.0,
+        "annual_equivalent_cycles": 145.6,
+        "temperature_factor": 1.0,
+        "estimated_c_rate": 0.2,
+        "stress_factor": 1.0,
+        "nominal_cycle_life": 1500.0
+      },
+      "model_used": true,
+      "battery_chemistry": "ncm",
+      "training_datasets": [
+        "CALB"
+      ],
+      "prediction_note": "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
+    }
+  },
+  {
+    "input": {
+      "battery_type": "NCM",
+      "voltage": 48,
+      "capacity_ah": 20,
+      "battery_age_months": 48,
+      "charge_start_soc": 10,
+      "charge_end_soc": 100,
+      "weekly_charge_times": 7,
+      "city": "Chengdu",
+      "driving_style": "normal",
+      "load_condition": "single",
+      "long_term_storage": "occasionally",
+      "parking_environment": "indoor"
+    },
+    "model_features": {
+      "cycle_index": 1310.3999999999999,
+      "cycle_position": 1310.3999999999999,
+      "nominal_capacity_in_Ah": 20.0,
+      "DOD": 0.9,
+      "DOC": 0.9,
+      "ambient_temperature_in_C": 24.0,
+      "voltage_mean": 3.921492857142857,
+      "voltage_std": 0.3674770915882555,
+      "voltage_min": 2.7489,
+      "voltage_max": 4.3498,
+      "current_mean": 0.24844818181818004,
+      "current_std": 45.10300975522486,
+      "current_min": -58.02951,
+      "current_max": 69.61185,
+      "current_abs_mean": 4.0,
+      "current_abs_max": 6.0,
+      "temperature_mean": 24.0,
+      "temperature_max": 28.0,
+      "charge_time": 6530.0,
+      "discharge_time": 3643.5,
+      "C_rate": 0.2
+    },
+    "raw_prediction": 0.8901980519294739,
+    "expected": {
+      "soh": 0.8183,
+      "soh_percent": 82,
+      "estimated_remaining_months": 3,
+      "estimated_remaining_years": 0.2,
+      "risk_level": "medium",
+      "main_degradation_factors": [
+        "Frequent full charging",
+        "Large charge-discharge window",
+        "High charging frequency",
+        "Deep discharge habit"
+      ],
+      "suggestions": [
+        "Try to stop daily charging around 80%-90% instead of 100%.",
+        "Use a narrower daily SOC window when possible, such as 20%-90%.",
+        "Frequent charging is fine when the SOC window is moderate; avoid combining it with deep cycles.",
+        "Start charging before the battery drops below about 20%."
+      ],
+      "mapped_features": {
+        "single_charge_dod": 0.9,
+        "daily_dod": 0.9,
+        "weekly_charge_times": 7.0,
+        "annual_equivalent_cycles": 327.6,
+        "temperature_factor": 1.0,
+        "estimated_c_rate": 0.2,
+        "stress_factor": 1.0,
+        "nominal_cycle_life": 1500.0
+      },
+      "model_used": true,
+      "battery_chemistry": "ncm",
+      "training_datasets": [
+        "CALB"
+      ],
+      "prediction_note": "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
+    }
+  },
+  {
+    "input": {
+      "battery_type": "NCM",
+      "voltage": 48,
+      "capacity_ah": 20,
+      "battery_age_months": 120,
+      "charge_start_soc": 40,
+      "charge_end_soc": 80,
+      "weekly_charge_times": 2,
+      "city": "Chengdu",
+      "driving_style": "normal",
+      "load_condition": "single",
+      "long_term_storage": "occasionally",
+      "parking_environment": "indoor"
+    },
+    "model_features": {
+      "cycle_index": 416.0,
+      "cycle_position": 416.0,
+      "nominal_capacity_in_Ah": 20.0,
+      "DOD": 0.4,
+      "DOC": 0.4,
+      "ambient_temperature_in_C": 24.0,
+      "voltage_mean": 3.921492857142857,
+      "voltage_std": 0.3674770915882555,
+      "voltage_min": 2.7489,
+      "voltage_max": 4.3498,
+      "current_mean": 0.24844818181818004,
+      "current_std": 45.10300975522486,
+      "current_min": -58.02951,
+      "current_max": 69.61185,
+      "current_abs_mean": 4.0,
+      "current_abs_max": 6.0,
+      "temperature_mean": 24.0,
+      "temperature_max": 28.0,
+      "charge_time": 6530.0,
+      "discharge_time": 3643.5,
+      "C_rate": 0.2
+    },
+    "raw_prediction": 0.8901980519294739,
+    "expected": {
+      "soh": 0.8466,
+      "soh_percent": 85,
+      "estimated_remaining_months": 21,
+      "estimated_remaining_years": 1.8,
+      "risk_level": "medium",
+      "main_degradation_factors": [
+        "Normal calendar and cycle aging"
+      ],
+      "suggestions": [
+        "Keep regular 20%-90% charging habits and avoid extreme temperatures."
+      ],
+      "mapped_features": {
+        "single_charge_dod": 0.4,
+        "daily_dod": 0.4,
+        "weekly_charge_times": 2.0,
+        "annual_equivalent_cycles": 41.6,
+        "temperature_factor": 1.0,
+        "estimated_c_rate": 0.2,
+        "stress_factor": 1.0,
+        "nominal_cycle_life": 1500.0
+      },
+      "model_used": true,
+      "battery_chemistry": "ncm",
+      "training_datasets": [
+        "CALB"
+      ],
+      "prediction_note": "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
+    }
+  },
+  {
+    "input": {
+      "battery_type": "LFP",
+      "voltage": 48,
+      "capacity_ah": 20,
+      "battery_age_months": 0,
+      "charge_start_soc": 20,
+      "charge_end_soc": 90,
+      "weekly_charge_times": 4,
+      "city": "Chengdu",
+      "driving_style": "normal",
+      "load_condition": "single",
+      "long_term_storage": "occasionally",
+      "parking_environment": "indoor"
+    },
+    "model_features": {
+      "cycle_index": 0.0,
+      "cycle_position": 0.0,
+      "nominal_capacity_in_Ah": 20.0,
+      "DOD": 0.7,
+      "DOC": 0.7,
+      "ambient_temperature_in_C": 24.0,
+      "voltage_mean": 3.291963880597015,
+      "voltage_std": 0.2790061833030701,
+      "voltage_min": 1.9974546,
+      "voltage_max": 3.6001449,
+      "current_mean": -0.0105439505094616,
+      "current_std": 3.3126470048992016,
+      "current_min": -4.001770909090909,
+      "current_max": 5.49925,
+      "current_abs_mean": 4.0,
+      "current_abs_max": 6.0,
+      "temperature_mean": 24.0,
+      "temperature_max": 28.0,
+      "charge_time": 1667.0,
+      "discharge_time": 1193.9655000001658,
+      "C_rate": 0.2
+    },
+    "raw_prediction": 0.982582688331604,
+    "expected": {
+      "soh": 0.9869,
+      "soh_percent": 99,
+      "estimated_remaining_months": 10,
+      "estimated_remaining_years": 0.8,
+      "risk_level": "low",
+      "main_degradation_factors": [
+        "Normal calendar and cycle aging"
+      ],
+      "suggestions": [
+        "Keep regular 20%-90% charging habits and avoid extreme temperatures."
+      ],
+      "mapped_features": {
+        "single_charge_dod": 0.7,
+        "daily_dod": 0.7,
+        "weekly_charge_times": 4.0,
+        "annual_equivalent_cycles": 145.6,
+        "temperature_factor": 1.0,
+        "estimated_c_rate": 0.2,
+        "stress_factor": 1.0,
+        "nominal_cycle_life": 2500.0
+      },
+      "model_used": true,
+      "battery_chemistry": "lfp",
+      "training_datasets": [
+        "HUST",
+        "MATR"
+      ],
+      "prediction_note": "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
+    }
+  },
+  {
+    "input": {
+      "battery_type": "LFP",
+      "voltage": 48,
+      "capacity_ah": 20,
+      "battery_age_months": 18,
+      "charge_start_soc": 20,
+      "charge_end_soc": 90,
+      "weekly_charge_times": 4,
+      "city": "Chengdu",
+      "driving_style": "normal",
+      "load_condition": "single",
+      "long_term_storage": "occasionally",
+      "parking_environment": "indoor"
+    },
+    "model_features": {
+      "cycle_index": 218.39999999999998,
+      "cycle_position": 218.39999999999998,
+      "nominal_capacity_in_Ah": 20.0,
+      "DOD": 0.7,
+      "DOC": 0.7,
+      "ambient_temperature_in_C": 24.0,
+      "voltage_mean": 3.291963880597015,
+      "voltage_std": 0.2790061833030701,
+      "voltage_min": 1.9974546,
+      "voltage_max": 3.6001449,
+      "current_mean": -0.0105439505094616,
+      "current_std": 3.3126470048992016,
+      "current_min": -4.001770909090909,
+      "current_max": 5.49925,
+      "current_abs_mean": 4.0,
+      "current_abs_max": 6.0,
+      "temperature_mean": 24.0,
+      "temperature_max": 28.0,
+      "charge_time": 1667.0,
+      "discharge_time": 1193.9655000001658,
+      "C_rate": 0.2
+    },
+    "raw_prediction": 0.9770470857620239,
+    "expected": {
+      "soh": 0.9712,
+      "soh_percent": 97,
+      "estimated_remaining_months": 60,
+      "estimated_remaining_years": 5.0,
+      "risk_level": "low",
+      "main_degradation_factors": [
+        "Normal calendar and cycle aging"
+      ],
+      "suggestions": [
+        "Keep regular 20%-90% charging habits and avoid extreme temperatures."
+      ],
+      "mapped_features": {
+        "single_charge_dod": 0.7,
+        "daily_dod": 0.7,
+        "weekly_charge_times": 4.0,
+        "annual_equivalent_cycles": 145.6,
+        "temperature_factor": 1.0,
+        "estimated_c_rate": 0.2,
+        "stress_factor": 1.0,
+        "nominal_cycle_life": 2500.0
+      },
+      "model_used": true,
+      "battery_chemistry": "lfp",
+      "training_datasets": [
+        "HUST",
+        "MATR"
+      ],
+      "prediction_note": "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
+    }
+  },
+  {
+    "input": {
+      "battery_type": "LFP",
+      "voltage": 48,
+      "capacity_ah": 20,
+      "battery_age_months": 48,
+      "charge_start_soc": 10,
+      "charge_end_soc": 100,
+      "weekly_charge_times": 7,
+      "city": "Chengdu",
+      "driving_style": "normal",
+      "load_condition": "single",
+      "long_term_storage": "occasionally",
+      "parking_environment": "indoor"
+    },
+    "model_features": {
+      "cycle_index": 1310.3999999999999,
+      "cycle_position": 1310.3999999999999,
+      "nominal_capacity_in_Ah": 20.0,
+      "DOD": 0.9,
+      "DOC": 0.9,
+      "ambient_temperature_in_C": 24.0,
+      "voltage_mean": 3.291963880597015,
+      "voltage_std": 0.2790061833030701,
+      "voltage_min": 1.9974546,
+      "voltage_max": 3.6001449,
+      "current_mean": -0.0105439505094616,
+      "current_std": 3.3126470048992016,
+      "current_min": -4.001770909090909,
+      "current_max": 5.49925,
+      "current_abs_mean": 4.0,
+      "current_abs_max": 6.0,
+      "temperature_mean": 24.0,
+      "temperature_max": 28.0,
+      "charge_time": 1667.0,
+      "discharge_time": 1193.9655000001658,
+      "C_rate": 0.2
+    },
+    "raw_prediction": 0.8800554871559143,
+    "expected": {
+      "soh": 0.8569,
+      "soh_percent": 86,
+      "estimated_remaining_months": 12,
+      "estimated_remaining_years": 1.0,
+      "risk_level": "medium",
+      "main_degradation_factors": [
+        "Frequent full charging",
+        "Large charge-discharge window",
+        "High charging frequency",
+        "Deep discharge habit"
+      ],
+      "suggestions": [
+        "Try to stop daily charging around 80%-90% instead of 100%.",
+        "Use a narrower daily SOC window when possible, such as 20%-90%.",
+        "Frequent charging is fine when the SOC window is moderate; avoid combining it with deep cycles.",
+        "Start charging before the battery drops below about 20%."
+      ],
+      "mapped_features": {
+        "single_charge_dod": 0.9,
+        "daily_dod": 0.9,
+        "weekly_charge_times": 7.0,
+        "annual_equivalent_cycles": 327.6,
+        "temperature_factor": 1.0,
+        "estimated_c_rate": 0.2,
+        "stress_factor": 1.0,
+        "nominal_cycle_life": 2500.0
+      },
+      "model_used": true,
+      "battery_chemistry": "lfp",
+      "training_datasets": [
+        "HUST",
+        "MATR"
+      ],
+      "prediction_note": "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
+    }
+  },
+  {
+    "input": {
+      "battery_type": "LFP",
+      "voltage": 48,
+      "capacity_ah": 20,
+      "battery_age_months": 120,
+      "charge_start_soc": 40,
+      "charge_end_soc": 80,
+      "weekly_charge_times": 2,
+      "city": "Chengdu",
+      "driving_style": "normal",
+      "load_condition": "single",
+      "long_term_storage": "occasionally",
+      "parking_environment": "indoor"
+    },
+    "model_features": {
+      "cycle_index": 416.0,
+      "cycle_position": 416.0,
+      "nominal_capacity_in_Ah": 20.0,
+      "DOD": 0.4,
+      "DOC": 0.4,
+      "ambient_temperature_in_C": 24.0,
+      "voltage_mean": 3.291963880597015,
+      "voltage_std": 0.2790061833030701,
+      "voltage_min": 1.9974546,
+      "voltage_max": 3.6001449,
+      "current_mean": -0.0105439505094616,
+      "current_std": 3.3126470048992016,
+      "current_min": -4.001770909090909,
+      "current_max": 5.49925,
+      "current_abs_mean": 4.0,
+      "current_abs_max": 6.0,
+      "temperature_mean": 24.0,
+      "temperature_max": 28.0,
+      "charge_time": 1667.0,
+      "discharge_time": 1193.9655000001658,
+      "C_rate": 0.2
+    },
+    "raw_prediction": 0.9668036103248596,
+    "expected": {
+      "soh": 0.9193,
+      "soh_percent": 92,
+      "estimated_remaining_months": 53,
+      "estimated_remaining_years": 4.4,
+      "risk_level": "low",
+      "main_degradation_factors": [
+        "Normal calendar and cycle aging"
+      ],
+      "suggestions": [
+        "Keep regular 20%-90% charging habits and avoid extreme temperatures."
+      ],
+      "mapped_features": {
+        "single_charge_dod": 0.4,
+        "daily_dod": 0.4,
+        "weekly_charge_times": 2.0,
+        "annual_equivalent_cycles": 41.6,
+        "temperature_factor": 1.0,
+        "estimated_c_rate": 0.2,
+        "stress_factor": 1.0,
+        "nominal_cycle_life": 2500.0
+      },
+      "model_used": true,
+      "battery_chemistry": "lfp",
+      "training_datasets": [
+        "HUST",
+        "MATR"
+      ],
+      "prediction_note": "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
+    }
+  }
+]

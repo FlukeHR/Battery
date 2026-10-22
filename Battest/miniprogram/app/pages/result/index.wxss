@@ -1,0 +1,29 @@
+.result-page {
+  padding-top: 24rpx;
+}
+
+.result-actions {
+  margin-top: 24rpx;
+}
+
+.split-actions {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 18rpx;
+}
+
+.split-actions button {
+  flex: 1;
+}
+
+.share-note {
+  margin: 20rpx 20rpx 0;
+  color: #7a8780;
+  font-size: 20rpx;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.empty-action {
+  margin-top: 34rpx;
+}

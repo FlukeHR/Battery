@@ -1,0 +1,23 @@
+<view class="result-page page-shell">
+  <block wx:if="{{report}}">
+    <result-card report="{{report}}" created-at-label="{{createdAtLabel}}" risk-message="{{riskMessage}}" />
+
+    <view class="result-actions">
+      <button class="primary-button" disabled="{{isSaved}}" bindtap="onSaveReport">
+        {{isSaved ? '已保存到本机' : '保存到本机'}}
+      </button>
+      <view class="split-actions">
+        <button class="secondary-button" bindtap="onReassess">再次评估</button>
+        <button class="secondary-button" open-type="share">分享摘要</button>
+      </view>
+    </view>
+    <view class="share-note">分享仅包含健康度、风险等级和小程序入口，不携带完整原始输入。</view>
+  </block>
+
+  <view wx:else class="surface-card empty-state">
+    <view class="empty-icon">?</view>
+    <view class="section-title">报告不可用</view>
+    <view class="page-subtitle">{{loadError}}</view>
+    <button class="primary-button empty-action" bindtap="onBackToAssessment">开始新评估</button>
+  </view>
+</view>

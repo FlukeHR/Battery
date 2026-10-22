@@ -1,0 +1,67 @@
+<view wx:if="{{report}}" class="report-card surface-card">
+  <view class="report-top">
+    <view>
+      <view class="report-kicker">电池健康</view>
+      <view class="report-heading">电池健康辅助评估</view>
+    </view>
+    <view class="model-chip">{{report.algorithm_version}}</view>
+  </view>
+
+  <view class="score-section">
+    <view class="score-label">当前 SOH</view>
+    <view class="score-number">{{report.result.soh_percent}}<text>%</text></view>
+    <risk-badge risk-level="{{report.result.risk_level}}" />
+    <view class="risk-message">{{riskMessage}}</view>
+  </view>
+
+  <view class="battery-meter" aria-label="电池健康度 {{report.result.soh_percent}}%">
+    <view class="battery-body">
+      <view class="battery-fill risk-{{report.result.risk_level}}" style="width: {{report.result.soh_percent}}%;" />
+    </view>
+    <view class="battery-tip" />
+  </view>
+
+  <view class="metric-grid">
+    <view class="metric">
+      <view class="metric-label">预计剩余</view>
+      <view class="metric-value">{{report.result.estimated_remaining_months}} 个月</view>
+    </view>
+    <view class="metric">
+      <view class="metric-label">评估场景</view>
+      <view class="metric-value">{{report.scenario_label}}</view>
+    </view>
+  </view>
+
+  <view class="insight-section">
+    <view class="insight-title"><text class="factor-dot" />主要衰减因素</view>
+    <view wx:for="{{report.result.main_degradation_factors}}" wx:key="*this" class="insight-row">
+      <text class="row-index">{{index + 1}}</text>
+      <text class="row-copy">{{item}}</text>
+    </view>
+  </view>
+
+  <view class="insight-section suggestion-section">
+    <view class="insight-title"><text class="suggestion-mark">✓</text>使用建议</view>
+    <view wx:for="{{report.result.suggestions}}" wx:key="*this" class="insight-row">
+      <text class="suggestion-bullet">✓</text>
+      <text class="row-copy">{{item}}</text>
+    </view>
+  </view>
+
+  <view class="basis-section">
+    <view class="basis-title">评估依据摘要</view>
+    <view wx:if="{{report.result.training_datasets.length}}" class="basis-copy">
+      训练数据：<text wx:for="{{report.result.training_datasets}}" wx:key="*this">{{index > 0 ? '、' : ''}}{{item}}</text>
+    </view>
+    <view wx:if="{{report.result.prediction_note}}" class="basis-copy">{{report.result.prediction_note}}</view>
+    <view class="basis-copy">
+      {{report.battery_label}} · {{report.input.voltage}}V {{report.input.capacity_ah}}Ah · 已使用 {{report.input.battery_age_months}} 个月
+    </view>
+    <view class="basis-copy">
+      充电 {{report.input.charge_start_soc}}%–{{report.input.charge_end_soc}}% · 每周 {{report.input.weekly_charge_times}} 次
+    </view>
+  </view>
+
+  <view class="report-meta">生成于 {{createdAtLabel}} · 算法 {{report.algorithm_version}}</view>
+  <view class="disclaimer">本结果用于使用管理与初步筛查，不替代专业检测设备、维修判断或厂商质保流程。</view>
+</view>

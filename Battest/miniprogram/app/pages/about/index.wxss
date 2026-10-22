@@ -1,0 +1,103 @@
+.about-hero {
+  padding: 30rpx 12rpx 38rpx;
+  text-align: center;
+}
+
+.brand-mark {
+  display: flex;
+  width: 92rpx;
+  height: 92rpx;
+  margin: 0 auto 24rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 28rpx 28rpx 28rpx 8rpx;
+  background: #167c5a;
+  color: #ffffff;
+  font-size: 44rpx;
+  font-weight: 850;
+  box-shadow: 0 14rpx 28rpx rgba(22, 124, 90, 0.2);
+}
+
+.about-card {
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+}
+
+.body-copy {
+  margin-top: 16rpx;
+  color: #64716a;
+  font-size: 24rpx;
+  line-height: 1.75;
+}
+
+.method-flow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 28rpx;
+  padding: 22rpx 10rpx;
+  border-radius: 20rpx;
+  background: #f2f7f4;
+  text-align: center;
+}
+
+.method-flow > view:not(.flow-arrow) {
+  width: 28%;
+  color: #385247;
+  font-size: 20rpx;
+  line-height: 1.4;
+}
+
+.method-flow text {
+  display: block;
+  margin-bottom: 8rpx;
+  color: #167c5a;
+  font-size: 21rpx;
+  font-weight: 800;
+}
+
+.flow-arrow {
+  color: #94aaa0;
+  font-size: 25rpx;
+}
+
+.bullet-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  margin-top: 18rpx;
+  color: #56645d;
+  font-size: 24rpx;
+  line-height: 1.65;
+}
+
+.bullet-row text {
+  color: #167c5a;
+  font-weight: 850;
+}
+
+.privacy-note {
+  margin-top: 22rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 16rpx;
+  background: #f3f5f4;
+  color: #7a8780;
+  font-size: 21rpx;
+  line-height: 1.55;
+}
+
+.warning-card {
+  border-color: #ead5bd;
+  background: #fffcf7;
+}
+
+.feedback-button {
+  margin-top: 24rpx;
+}
+
+.version {
+  padding: 16rpx 10rpx 0;
+  color: #89948f;
+  font-size: 20rpx;
+  text-align: center;
+}
