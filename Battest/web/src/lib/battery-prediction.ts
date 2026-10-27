@@ -1,8 +1,15 @@
+import { predictResidualValue, type ResidualValueResult } from "./residual-value";
 import { chemistryModels, predictXGBoost } from "./xgboost";
 
 export type RiskLevel = "low" | "medium" | "high";
 
 export interface PredictionInput {
+  brand?: string;
+  assembly_source?: string;
+  new_battery_price?: number | null;
+  full_charge_range_km?: number | null;
+  charge_cycles?: number | null;
+  original_charger?: string;
   battery_type: string;
   voltage: number;
   capacity_ah: number;
@@ -18,6 +25,7 @@ export interface PredictionInput {
 }
 
 export interface PredictionResult {
+  residual_value?: ResidualValueResult;
   soh: number;
   soh_percent: number;
   estimated_remaining_months: number;
@@ -201,7 +209,7 @@ function batteryKey(value: string): BatteryKey {
   if (["lfp", "lifepo4", "lithium_iron_phosphate", "磷酸铁锂"].includes(normalized)) {
     return "lfp";
   }
-  if (["ncm", "nmc", "ternary_lithium", "三元锂", "三元锂电池"].includes(normalized)) {
+  if (["ncm", "nmc", "ternary_lithium", "三元", "三元锂", "三元锂电池"].includes(normalized)) {
     return "ncm";
   }
   if (["lead_acid", "leadacid", "lead", "铅酸", "铅酸电池"].includes(normalized)) {
@@ -397,6 +405,7 @@ export function predictFromUserInput(input: PredictionInput): PredictionResult {
   const months = remainingMonths(soh, features);
 
   return {
+    residual_value: predictResidualValue(input, chemistry),
     soh: roundTo(soh, 4),
     soh_percent: roundTo(soh * 100, 0),
     estimated_remaining_months: months,

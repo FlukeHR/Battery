@@ -20,6 +20,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { residualBrands, assemblySources } from "@/lib/residual-options";
 import { cn } from "@/lib/utils";
 import type { PredictionResult, RiskLevel } from "@/lib/battery-prediction";
 
@@ -30,7 +31,7 @@ const fieldClassName =
 
 const batteryTypes = [
   ["LFP", "磷酸铁锂"],
-  ["NCM", "三元锂"],
+  ["NCM", "三元"],
   ["Lead-acid", "铅酸"],
   ["Unknown", "不确定"],
 ] as const;
@@ -145,7 +146,17 @@ export function BatteryAssessment() {
       return;
     }
 
+    const optionalNumber = (name: string) => {
+      const value = data.get(name);
+      return value === null || value === "" ? null : Number(value);
+    };
     const payload = {
+      brand: String(data.get("brand")),
+      assembly_source: String(data.get("assembly_source")),
+      new_battery_price: optionalNumber("new_battery_price"),
+      full_charge_range_km: optionalNumber("full_charge_range_km"),
+      charge_cycles: optionalNumber("charge_cycles"),
+      original_charger: String(data.get("original_charger")),
       battery_type: String(data.get("battery_type")),
       voltage: Number(data.get("voltage")),
       capacity_ah: Number(data.get("capacity_ah")),
@@ -220,15 +231,21 @@ export function BatteryAssessment() {
         </CardHeader>
 
         <CardContent className="p-5 sm:p-7">
-          <form onSubmit={submitPrediction} className="space-y-8">
+          <form onSubmit={submitPrediction} onChange={() => setResult(null)} className="space-y-8">
             <FormSection number="01" title="电池基础信息">
-              <AssessmentField id="battery_type" label="电池类型">
+              <AssessmentField id="brand" label="品牌">
+                <select id="brand" name="brand" defaultValue="" required className={fieldClassName}>
+                  <option value="" disabled>请选择品牌 / 电芯标签</option>
+                  {residualBrands.map(value => <option key={value} value={value}>{value}</option>)}
+                </select>
+              </AssessmentField>
+              <AssessmentField id="battery_type" label="电池种类">
                 <select id="battery_type" name="battery_type" value={batteryType}
                   disabled={isSubmitting} className={fieldClassName}
                   onChange={(event) => {
                     setBatteryType(event.target.value);
                     setResult(null);
-                    event.currentTarget.form?.requestSubmit();
+
                   }}>
                   {batteryTypes.map(([value, label]) => (
                     <option key={value} value={value}>{label}</option>
@@ -262,14 +279,38 @@ export function BatteryAssessment() {
               </AssessmentField>
               <AssessmentField id="capacity_ah" label="标称容量">
                 <select id="capacity_ah" name="capacity_ah" defaultValue="20" className={fieldClassName}>
-                  {[12, 20, 24, 32, 40].map((value) => (
+                  {[12, 20, 24, 30, 32, 40, 50, 60, 70, 80, 90, 100, 120].map((value) => (
                     <option key={value} value={value}>{value}Ah</option>
                   ))}
                 </select>
               </AssessmentField>
             </FormSection>
 
-            <FormSection number="02" title="充电习惯">
+            <FormSection number="02" title="残值估价信息">
+              <AssessmentField id="assembly_source" label="组装 / 成组来源">
+                <select id="assembly_source" name="assembly_source" defaultValue="" required className={fieldClassName}>
+                  <option value="" disabled>请选择来源</option>
+                  {assemblySources.map(value => <option key={value} value={value}>{value}</option>)}
+                </select>
+              </AssessmentField>
+              <AssessmentField id="original_charger" label="是否带原装充电器">
+                <select id="original_charger" name="original_charger" defaultValue="未知" className={fieldClassName}>
+                  {["未知", "是", "否"].map(value => <option key={value} value={value}>{value}</option>)}
+                </select>
+              </AssessmentField>
+              <AssessmentField id="new_battery_price" label="新电参考价（元，可选）">
+                <input id="new_battery_price" name="new_battery_price" type="number" min="0.01" max="1000000" step="any" placeholder="填写后显示残值率" className={fieldClassName} />
+              </AssessmentField>
+              <AssessmentField id="full_charge_range_km" label="当前满电续航（km，可选）">
+                <input id="full_charge_range_km" name="full_charge_range_km" type="number" min="0" max="10000" step="any" placeholder="填写实测续航" className={fieldClassName} />
+              </AssessmentField>
+              <AssessmentField id="charge_cycles" label="累计充电循环次数（可选）">
+                <input id="charge_cycles" name="charge_cycles" type="number" min="0" max="100000" step="any" placeholder="不清楚可留空" className={fieldClassName} />
+              </AssessmentField>
+              <p className="text-xs leading-relaxed text-muted-foreground sm:col-span-2">残值预测支持三元、磷酸铁锂。可选数值留空时按训练数据中位数处理。</p>
+            </FormSection>
+
+            <FormSection number="03" title="充电习惯">
               <AssessmentField id="charge_start_soc" label="通常从多少电开始充">
                 <select id="charge_start_soc" name="charge_start_soc" defaultValue="20" className={fieldClassName}>
                   {[10, 20, 30, 40, 50].map((value) => (
@@ -295,7 +336,7 @@ export function BatteryAssessment() {
               </AssessmentField>
             </FormSection>
 
-            <FormSection number="03" title="使用与环境">
+            <FormSection number="04" title="使用与环境">
               <AssessmentField id="driving_style" label="驾驶习惯">
                 <select id="driving_style" name="driving_style" defaultValue="normal" className={fieldClassName}>
                   <option value="gentle">温和</option>
@@ -343,7 +384,7 @@ export function BatteryAssessment() {
 
             <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Gauge className="h-4 w-4" />}
-              {isSubmitting ? "正在生成评估…" : "生成电池健康评估"}
+              {isSubmitting ? "正在生成评估…" : "生成健康与残值评估"}
             </Button>
           </form>
         </CardContent>
@@ -408,7 +449,7 @@ function AssessmentResult({ result }: { result: PredictionResult | null }) {
           </div>
           <h2 className="mt-6 text-xl font-semibold">等待生成评估</h2>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            完成左侧信息后，系统会给出 SOH、预计剩余寿命、主要衰减因素与针对性建议。
+            完成左侧信息后，系统会给出 SOH、预计剩余寿命、残值预测、主要衰减因素与针对性建议。
           </p>
           <div className="mt-8 grid w-full max-w-sm grid-cols-3 gap-2 text-xs text-muted-foreground">
             {["健康度", "剩余寿命", "保养建议"].map((label) => (
@@ -456,6 +497,19 @@ function AssessmentResult({ result }: { result: PredictionResult | null }) {
           </div>
           <div className="h-7 w-2 rounded-r-sm bg-foreground/80" />
         </div>
+
+        <section aria-label="残值预测" className="rounded-xl border border-primary/20 bg-primary/5 p-5">
+          <h3 className="text-sm font-semibold text-primary">残值预测</h3>
+          {result.residual_value?.available ? <>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-primary">¥ {result.residual_value.estimated_price_yuan?.toLocaleString("zh-CN")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">估算当前残值（挂牌价口径）</p>
+            <p className="mt-3 text-sm">{result.residual_value.brand} · {result.residual_value.battery_type}</p>
+            {result.residual_value.residual_rate_percent !== null ? <p className="mt-1 text-sm">残值率 {result.residual_value.residual_rate_percent}%（相对新电参考价）</p> : null}
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{result.residual_value.note}</p>
+            <p className="mt-2 text-xs text-muted-foreground">历史交叉验证平均绝对误差约 {result.residual_value.validation_mae_yuan} 元，非个体误差保证。</p>
+            {result.residual_value.warnings.map(warning => <p key={warning} className="mt-2 text-xs text-amber-800">{warning}</p>)}
+          </> : <p className="mt-2 text-sm text-muted-foreground">{result.residual_value?.note ?? "补充品牌与残值信息后重新评估。"}</p>}
+        </section>
 
         <dl className="grid grid-cols-2 gap-3">
           <Metric label="预计剩余" value={String(result.estimated_remaining_months) + " 个月"} />

@@ -9,3 +9,5 @@ joblib
 torch
 tqdm
 pytest
+
+openpyxl

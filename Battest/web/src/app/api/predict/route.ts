@@ -1,9 +1,16 @@
 import { z } from "zod";
+import { residualBrands, assemblySources } from "@/lib/residual-options";
 
 import { predictFromUserInput } from "@/lib/battery-prediction";
 
 const predictionSchema = z
   .object({
+    brand: z.enum(residualBrands).optional(),
+    assembly_source: z.enum(assemblySources).optional(),
+    new_battery_price: z.number().positive().finite().max(1000000).nullable().optional(),
+    full_charge_range_km: z.number().min(0).finite().max(10000).nullable().optional(),
+    charge_cycles: z.number().min(0).finite().max(100000).nullable().optional(),
+    original_charger: z.enum(["是", "否", "未知"]).optional(),
     battery_type: z.string().default("LFP"),
     voltage: z.coerce.number().positive().max(120).default(48),
     capacity_ah: z.coerce.number().positive().max(120).default(20),
@@ -16,6 +23,9 @@ const predictionSchema = z
     long_term_storage: z.string().default("occasionally"),
     city: z.string().default("Chengdu"),
     parking_environment: z.string().default("indoor"),
+  })
+  .refine((input) => !input.brand || Boolean(input.assembly_source), {
+    message: "选择品牌后需要填写组装来源。", path: ["assembly_source"],
   })
   .refine((input) => input.charge_end_soc > input.charge_start_soc, {
     message: "充电结束电量必须高于开始充电时的电量。",
