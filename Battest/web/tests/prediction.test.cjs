@@ -45,3 +45,36 @@ test("回归树在阈值两侧及缺失值时选择正确分支", () => {
   model.trees[0].split_conditions[0] = 3.1;
   assert.equal(predictXGBoost(model, { x: 3.1 }), 0.25);
 });
+
+const residualFixtures = require("./fixtures/residual-parity.json");
+for (const fixture of residualFixtures) {
+  test(`残值与Python一致：${fixture.input.battery_type}/${fixture.input.new_battery_price}`, () => {
+    const original = predictFromUserInput(fixtures[0].input);
+    const result = predictFromUserInput({ ...fixtures[0].input, ...fixture.input });
+    assert.equal(result.residual_value.available, true);
+    assert.equal(result.residual_value.estimated_price_yuan, fixture.price);
+    assert.equal(result.residual_value.residual_rate_percent === null, fixture.input.new_battery_price === null);
+    const noResidual = predictFromUserInput({ ...fixtures[0].input, ...fixture.input, brand: undefined });
+    assert.equal(result.soh, noResidual.soh);
+    assert.equal(result.estimated_remaining_months, noResidual.estimated_remaining_months);
+    assert.equal(original.residual_value.available, false);
+  });
+}
+test("不支持的化学类型、品牌、缺失来源不返回虚假价格", () => {
+  const base = { ...fixtures[0].input, ...residualFixtures[0].input };
+  for (const change of [{ battery_type: "Lead-acid" }, { battery_type: "Unknown" },
+    { brand: "随意品牌" }, { assembly_source: undefined }, { charge_cycles: -1 }]) {
+    const result = predictFromUserInput({ ...base, ...change });
+    assert.equal(result.residual_value.available, false);
+    assert.equal(result.residual_value.estimated_price_yuan, null);
+  }
+});
+test("品牌和电池类型参与残值模型，超范围有明确说明", () => {
+  const base = { ...fixtures[0].input, ...residualFixtures[0].input };
+  const a = predictFromUserInput(base).residual_value;
+  const b = predictFromUserInput({ ...base, brand: "九号" }).residual_value;
+  const c = predictFromUserInput({ ...base, battery_type: "LFP" }).residual_value;
+  assert.notEqual(a.estimated_price_yuan, b.estimated_price_yuan);
+  assert.notEqual(a.estimated_price_yuan, c.estimated_price_yuan);
+  assert.ok(predictFromUserInput({ ...base, voltage: 110 }).residual_value.warnings.length > 0);
+});
