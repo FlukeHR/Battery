@@ -1,0 +1,62 @@
+[
+  {
+    "input": {
+      "battery_type": "NCM",
+      "brand": "小牛",
+      "assembly_source": "原厂原装",
+      "original_charger": "未知",
+      "voltage": 48,
+      "capacity_ah": 30,
+      "new_battery_price": 1944,
+      "full_charge_range_km": 60,
+      "battery_age_months": 12,
+      "charge_cycles": 100
+    },
+    "price": 939
+  },
+  {
+    "input": {
+      "battery_type": "NCM",
+      "brand": "小牛",
+      "assembly_source": "原厂原装",
+      "original_charger": "未知",
+      "voltage": 60,
+      "capacity_ah": 50,
+      "new_battery_price": null,
+      "full_charge_range_km": null,
+      "battery_age_months": 18,
+      "charge_cycles": null
+    },
+    "price": 1071
+  },
+  {
+    "input": {
+      "battery_type": "LFP",
+      "brand": "小牛",
+      "assembly_source": "原厂原装",
+      "original_charger": "未知",
+      "voltage": 48,
+      "capacity_ah": 30,
+      "new_battery_price": 1944,
+      "full_charge_range_km": 60,
+      "battery_age_months": 12,
+      "charge_cycles": 100
+    },
+    "price": 948
+  },
+  {
+    "input": {
+      "battery_type": "LFP",
+      "brand": "小牛",
+      "assembly_source": "原厂原装",
+      "original_charger": "未知",
+      "voltage": 60,
+      "capacity_ah": 50,
+      "new_battery_price": null,
+      "full_charge_range_km": null,
+      "battery_age_months": 18,
+      "charge_cycles": null
+    },
+    "price": 1082
+  }
+]
