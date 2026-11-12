@@ -1,0 +1,54 @@
+{
+  "model_version": "xgboost-v2",
+  "scope": "本报告包含5个来源各10题，统计仅对应本报告50个案例",
+  "input_conditions": "已知实验协议映射为铭牌信息；每周7次完整循环、成都室内、正常负载",
+  "soh_mae_pp": 0.6093562194444526,
+  "rul_mape_percent": 6.3397117436591435,
+  "groups": [
+    {
+      "dataset": "CALB",
+      "chemistry": "ncm",
+      "cases": 10,
+      "cells": 4,
+      "soh_mae_pp": 0.6465773283094567,
+      "soh_max_error_pp": 0.8971095343608737,
+      "rul_mape_percent": null
+    },
+    {
+      "dataset": "XJTU",
+      "chemistry": "ncm",
+      "cases": 10,
+      "cells": 5,
+      "soh_mae_pp": 0.3171562247771109,
+      "soh_max_error_pp": 0.8601876675603193,
+      "rul_mape_percent": null
+    },
+    {
+      "dataset": "HUST",
+      "chemistry": "lfp",
+      "cases": 10,
+      "cells": 4,
+      "soh_mae_pp": 0.8421225049145498,
+      "soh_max_error_pp": 1.4967973879188912,
+      "rul_mape_percent": 6.884638759747992
+    },
+    {
+      "dataset": "MATR",
+      "chemistry": "lfp",
+      "cases": 10,
+      "cells": 6,
+      "soh_mae_pp": 1.0692244742493962,
+      "soh_max_error_pp": 1.524865099659789,
+      "rul_mape_percent": 9.984599888740956
+    },
+    {
+      "dataset": "SNL",
+      "chemistry": "lfp",
+      "cases": 10,
+      "cells": 1,
+      "soh_mae_pp": 0.17170056497174957,
+      "soh_max_error_pp": 0.34414312617702114,
+      "rul_mape_percent": 2.1498965824884806
+    }
+  ]
+}

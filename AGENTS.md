@@ -5,7 +5,6 @@
 本仓库同时维护电池建模管线、官网和微信小程序。官网为 `Battest/web/`，小程序为 `Battest/miniprogram/`。用户要求保留这一结构，两端必须共用官网的 `/api/predict`，不得在小程序中复制 SOH 算法。
 
 - `src/`：Python 数据读取、特征工程、训练、预测和网站模型导出。
-- `tests/`：Python 模型管线测试。
 - `Battest/web/src/app/`：官网页面及唯一线上 API。
 - `Battest/web/src/lib/battery-prediction.ts`：在线输入映射与融合预测。
 - `Battest/web/src/lib/xgboost.ts`、`models/`：已训练回归树的服务端推理及轻量模型。
@@ -15,13 +14,15 @@
 
 ## 数据与建模
 
-- CALB 为三元锂（NCM / NMC），HUST 和 MATR 为磷酸铁锂（LFP / LiFePO4）。
+- CALB 和 XJTU 为三元锂（NCM / NMC），HUST、MATR、SNL 为磷酸铁锂（LFP / LiFePO4）。SNL/XJTU 位于 `dataset/battery_life_test_SNL_LFP_XJTU/dataset/`，已进入 V2 开发和重训，不再称为独立外部测试集。
 - 修改特征提取前先检查实际 Pickle 结构，并校验正极材料与来源化学类型。
 - SOH = 当前循环放电容量 / 首个有效循环放电容量；寿命终点为 SOH ≤ 0.80。
 - 在每个来源内部按完整 `cell_id` 分组划分，确保各来源进入训练集和测试集，同一电芯不得交叉。
 - HUST 无温度记录，应保留样本；只使用训练集中位数补齐，训练集整列缺失时填零。
 - `dataset`、`battery_chemistry` 为来源信息，不作为模型特征。
-- 两类模型使用相同 XGBoost 参数。CALB 模型保存在本地 `models/`，HUST + MATR 保存在本地 `models/lfp/`。
+- 两类 SOH 模型使用相同 XGBoost 参数。CALB + XJTU 模型保存在本地 `models/`，HUST + MATR + SNL 保存在本地 `models/lfp/`。
+- V2 使用 `src.train_usage_models`，只用与网页输入对应的9项特征；铭牌未知必须显式编码，不能把训练中位数当成实测信息。验证集选参数和寿命偏差校准，按完整电芯保留测试；反复用于结构调整的对照应明确标为开发验证。
+- SOH 与剩余寿命分开说明模型来源。只有实际观测 SOH≤0.80 的电芯才有精确剩余循环标签，未达终点保持右删失，禁止用记录结束或附带外推标签替代。当前寿命头至少需要10个观测终点训练电芯；不足时明确回退规则估算。
 - 保留 75% 对应模型与 25% 使用习惯规则的融合；没有对应模型的类型只使用规则。
 - 不训练 Transformer，不引入本任务不需要的新依赖或额外线上后端。
 - 不修改或删除原始数据，不在未重新运行完整管线并更新报告时覆盖训练产物。
@@ -32,24 +33,21 @@
 
 导出支持当前单输出、数值特征的 `gbtree` + `reg:squarederror` 模型，不支持的模型必须明确报错。网站输入映射、缺失值、float32 回归树计算及融合方式应与 Python 保持一致。
 
-修改模型、特征映射、SOH 阈值或规则时，必须增加有意义的测试。重新训练后需重新导出，并通过 Python 原生模型与网站结果的对照测试。健康状态与预测响应必须真实标注实际模型及来源。
+当前自动测试代码已按用户要求移除。修改模型、特征映射、SOH 阈值或规则时，需使用固定输入核对 Python 原生模型与网站结果。重新训练后需重新导出，并记录实际对照结果。健康状态与预测响应必须真实标注实际模型及来源。
 
 ## 开发与验证
 
 Python 使用 `dachuang` 环境，优先通过 `conda run -n dachuang python` 执行；启动器不可用时允许直接调用该环境的 Python。
 
 ```powershell
-python -m pytest -q
 cd Battest/web
 npm ci
-npm test
 npm run lint
 npm run build
 cd ../miniprogram
 npm ci
 npm run typecheck
 npm run lint
-npm test
 ```
 
 只有需要重新生成训练产物时，才运行完整检查、特征处理和训练流程。官网接口变更还需检查 `/api/health`，并使用固定输入请求 `/api/predict`。未经浏览器或 HTTP 检查不得声称网页已验证；未使用微信开发者工具或真机不得声称已完成对应验收。

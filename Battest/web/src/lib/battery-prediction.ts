@@ -1,4 +1,5 @@
 import { chemistryModels, predictXGBoost } from "./xgboost";
+import type { XGBoostModel } from "./xgboost";
 
 export type RiskLevel = "low" | "medium" | "high";
 
@@ -15,6 +16,8 @@ export interface PredictionInput {
   long_term_storage: string;
   city: string;
   parking_environment: string;
+  charger_current_a?: number;
+  motor_power_w?: number;
 }
 
 export interface PredictionResult {
@@ -31,6 +34,9 @@ export interface PredictionResult {
   training_datasets: string[];
   prediction_note: string;
   algorithm_version: string;
+  estimated_remaining_cycles?: number;
+  remaining_life_method?: "trained_cycles" | "rules";
+  remaining_life_note?: string;
 }
 
 type BatteryKey = "lfp" | "ncm" | "lead_acid" | "unknown";
@@ -52,6 +58,8 @@ interface UserFeatures {
   temperatureFactor: number;
   estimatedTemperature: number;
   estimatedCRate: number;
+  chargeCRate?: number;
+  dischargeCRate?: number;
   stressFactor: number;
   storageStressFactor: number;
   nominalCycleLife: number;
@@ -311,6 +319,10 @@ function estimateUserFeatures(input: PredictionInput): UserFeatures {
     temperatureFactor,
     estimatedTemperature,
     estimatedCRate,
+    chargeCRate: input.charger_current_a !== undefined && Number.isFinite(input.charger_current_a)
+      && input.charger_current_a > 0 ? input.charger_current_a / input.capacity_ah : undefined,
+    dischargeCRate: input.motor_power_w !== undefined && Number.isFinite(input.motor_power_w)
+      && input.motor_power_w > 0 ? input.motor_power_w / (input.voltage * input.capacity_ah) : undefined,
     stressFactor,
     storageStressFactor: storageStress,
     nominalCycleLife: chemistry.nominalCycleLife,
@@ -375,6 +387,7 @@ export function predictFromUserInput(input: PredictionInput): PredictionResult {
   const features = estimateUserFeatures(input);
   const chemistry = batteryKey(input.battery_type);
   const model = chemistryModels[chemistry];
+  if (model?.model_version === 2) return predictUsageModel(features, chemistry, model);
   let soh = heuristicSoh(features);
   if (model) {
     const modelInput = {
@@ -422,5 +435,87 @@ export function predictFromUserInput(input: PredictionInput): PredictionResult {
       ? "使用同类型电池实验数据训练的 XGBoost，结合充电与使用习惯估算。"
       : "暂无匹配该电池类型的训练数据，当前使用习惯规则估算。",
     algorithm_version: model ? "xgboost-v1" : "rules-v1",
+  };
+}
+
+function predictUsageModel(features: UserFeatures, chemistry: BatteryKey, model: XGBoostModel): PredictionResult {
+  const modelInput = {
+    ...model.defaults,
+    cycle_position: features.estimatedCyclesElapsed,
+    DOD: features.singleChargeDod,
+    DOC: features.singleChargeDod,
+    context_temperature_c: features.estimatedTemperature,
+    cold_exposure: Math.max((10 - features.estimatedTemperature) / 10, 0),
+    heat_exposure: Math.max((features.estimatedTemperature - 35) / 10, 0),
+    charge_rate_known: features.chargeCRate === undefined ? 0 : 1,
+    discharge_rate_known: features.dischargeCRate === undefined ? 0 : 1,
+    charge_c_rate: features.chargeCRate ?? model.defaults.charge_c_rate,
+    discharge_c_rate: features.dischargeCRate ?? model.defaults.discharge_c_rate,
+  };
+  const modelSoh = clamp(predictXGBoost(model, modelInput), 0, 1);
+  let remainingCycles: number | undefined;
+  if (model.lifetime) {
+    const lifeInput = {
+      ...modelInput,
+      charge_c_rate: features.chargeCRate ?? model.lifetime.defaults.charge_c_rate,
+      discharge_c_rate: features.dischargeCRate ?? model.lifetime.defaults.discharge_c_rate,
+    };
+    const key = String(features.chargeCRate === undefined ? 0 : 1) + String(features.dischargeCRate === undefined ? 0 : 1);
+    const scale = model.lifetime_calibration_scales?.[key] ?? 1;
+    remainingCycles = Math.max(Math.expm1(predictXGBoost(model.lifetime, lifeInput)) * scale, 0);
+  }
+  const elapsed = features.estimatedCyclesElapsed;
+  const annual = features.annualEquivalentCycles;
+  const nominalLife = remainingCycles !== undefined ? Math.max(elapsed + remainingCycles, 1) : features.nominalCycleLife;
+  const calendarRate = 0.0017 * features.temperatureFactor * features.storageStressFactor
+    * BATTERY_CHEMISTRY[chemistry].calendarLossFactor;
+  const calendarLoss = features.batteryAgeMonths * calendarRate;
+  const cycleLoss = 0.2 * elapsed / nominalLife * features.stressFactor;
+  const chargeLoss = Math.max(features.chargeEndSoc - 90, 0) * 0.0012;
+  const deepLoss = Math.max(20 - features.chargeStartSoc, 0) * 0.0009;
+  const ruleSoh = clamp(1 - Math.max(calendarLoss, cycleLoss) - chargeLoss - deepLoss, 0, 1);
+  const soh = clamp(0.75 * modelSoh + 0.25 * ruleSoh, 0, 1);
+  let months: number;
+  let cycles: number;
+  let method: "trained_cycles" | "rules";
+  let lifeNote: string;
+  if (remainingCycles === undefined) {
+    months = remainingMonths(soh, features);
+    cycles = months * annual / 12;
+    method = "rules";
+    lifeNote = "该类型缺少足够的实测寿命终点，剩余时间仍为规则估算，未经寿命模型验证。";
+  } else {
+    const calendarMonths = Math.max((soh - EOL_SOH) / calendarRate, 0);
+    const cycleMonths = annual > 0 ? remainingCycles * 12 / annual : Infinity;
+    months = Math.max(roundTo(Math.min(calendarMonths, cycleMonths), 0), 0);
+    cycles = Math.max(Math.min(remainingCycles, calendarMonths * annual / 12), 0);
+    method = "trained_cycles";
+    lifeNote = "剩余循环由实测寿命终点训练，月份按当前使用频率换算，并受日历老化假设限制；不代表实测车辆日历寿命。";
+  }
+  if (soh <= EOL_SOH) { months = 0; cycles = 0; }
+  let note = "使用与网页输入对应的 XGBoost 特征，按 75% 模型与 25% 使用习惯规则融合。";
+  if (features.chargeCRate === undefined || features.dischargeCRate === undefined) {
+    note += "部分铭牌信息未提供，使用训练集默认条件，结果参考性降低。";
+  }
+  if (Object.entries(model.training_domain ?? {}).some(([name, bounds]) => {
+    const value = (modelInput as Record<string, number>)[name];
+    return value < bounds.min || value > bounds.max;
+  })) note += "部分使用条件超出现有实验覆盖范围。";
+  return {
+    soh: roundTo(soh, 4), soh_percent: roundTo(soh * 100, 0),
+    estimated_remaining_months: months, estimated_remaining_years: roundTo(months / 12, 1),
+    estimated_remaining_cycles: roundTo(cycles, 1), remaining_life_method: method, remaining_life_note: lifeNote,
+    risk_level: riskLevelFromSoh(soh), main_degradation_factors: features.riskFactors.slice(0, 4),
+    suggestions: features.suggestions.slice(0, 4),
+    mapped_features: {
+      single_charge_dod: roundTo(features.singleChargeDod, 4), daily_dod: roundTo(features.singleChargeDod, 4),
+      weekly_charge_times: roundTo(features.weeklyChargeTimes, 2), annual_equivalent_cycles: roundTo(annual, 2),
+      temperature_factor: roundTo(features.temperatureFactor, 2), estimated_temperature_c: roundTo(features.estimatedTemperature, 1),
+      estimated_c_rate: roundTo(features.estimatedCRate, 3), charge_c_rate: roundTo(modelInput.charge_c_rate, 3),
+      discharge_c_rate: roundTo(modelInput.discharge_c_rate, 3), stress_factor: roundTo(features.stressFactor, 3),
+      nominal_cycle_life: roundTo(nominalLife, 0),
+    },
+    model_used: true, battery_chemistry: chemistry, training_datasets: model.training_datasets,
+    prediction_note: note, algorithm_version: "xgboost-v2",
   };
 }

@@ -38,7 +38,6 @@ cd Battest/miniprogram
 npm install
 npm run typecheck
 npm run lint
-npm test
 ```
 
 随后在微信开发者工具中导入 `Battest/miniprogram`。开发工具会按 `miniprogramRoot` 与 TypeScript 编译插件加载源码。若仅在模拟器调试尚未配置的域名，可临时关闭域名校验；真机与发布版本必须完成合法域名配置。
@@ -51,7 +50,6 @@ npm test
 - `app/stores/`：草稿、临时结果与本地历史。
 - `app/types/`：API 和页面共享类型。
 - `app/utils/`：校验与展示纯函数。
-- `tests/`：校验、API 契约、历史淘汰和风险文案测试。
 
 ## 发布前人工验收
 

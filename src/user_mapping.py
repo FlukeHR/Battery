@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import Any, Mapping
 
 
@@ -170,6 +171,14 @@ def _factor(mapping: dict[str, float], value: Any, default_key: str) -> float:
     return mapping.get(normalized, mapping[default_key])
 
 
+def _positive_optional(payload: Mapping[str, Any], name: str) -> float | None:
+    try:
+        value = float(payload[name])
+    except (KeyError, TypeError, ValueError):
+        return None
+    return value if math.isfinite(value) and value > 0 else None
+
+
 def risk_level_from_soh(soh: float) -> str:
     if soh >= 0.88:
         return "low"
@@ -186,6 +195,8 @@ def estimate_user_features(payload: Mapping[str, Any]) -> dict[str, Any]:
     charge_start_soc = min(max(_float(payload, "charge_start_soc", 20.0), 0.0), 100.0)
     charge_end_soc = min(max(_float(payload, "charge_end_soc", 90.0), 0.0), 100.0)
     battery_energy_wh = max(voltage * capacity_ah, 1.0)
+    charger_current = _positive_optional(payload, "charger_current_a")
+    motor_power = _positive_optional(payload, "motor_power_w")
     single_charge_dod = min(max((charge_end_soc - charge_start_soc) / 100.0, 0.0), 1.0)
     weekly_charge_times = _weekly_charge_times(payload)
     annual_equivalent_cycles = single_charge_dod * weekly_charge_times * 52.0
@@ -246,6 +257,8 @@ def estimate_user_features(payload: Mapping[str, Any]) -> dict[str, Any]:
         "chemistry_calendar_loss_factor": chemistry["calendar_loss_factor"],
         "voltage": voltage,
         "capacity_ah": capacity_ah,
+        "charge_c_rate": charger_current / capacity_ah if charger_current is not None and capacity_ah > 0 else None,
+        "discharge_c_rate": motor_power / battery_energy_wh if motor_power is not None else None,
         "battery_age_months": max(_float(payload, "battery_age_months", 12.0), 0.0),
         "battery_energy_wh": battery_energy_wh,
         "single_charge_dod": single_charge_dod,

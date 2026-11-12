@@ -158,6 +158,8 @@ export function BatteryAssessment() {
       long_term_storage: String(data.get("long_term_storage")),
       city: String(data.get("city")),
       parking_environment: String(data.get("parking_environment")),
+      charger_current_a: data.get("charger_current_a") ? Number(data.get("charger_current_a")) : undefined,
+      motor_power_w: data.get("motor_power_w") ? Number(data.get("motor_power_w")) : undefined,
     };
 
     setError(null);
@@ -235,8 +237,8 @@ export function BatteryAssessment() {
                   ))}
                 </select>
                 <p className="text-xs text-muted-foreground">
-                  {batteryType === "LFP" ? "参考 HUST、MATR 磷酸铁锂实验数据。"
-                    : batteryType === "NCM" ? "参考 CALB 三元锂实验数据。"
+                  {batteryType === "LFP" ? "参考 HUST、MATR、SNL 磷酸铁锂实验数据。"
+                    : batteryType === "NCM" ? "参考 CALB、XJTU 三元锂实验数据。"
                     : "暂无对应实验模型，使用习惯规则估算。"}
                 </p>
               </AssessmentField>
@@ -293,9 +295,19 @@ export function BatteryAssessment() {
                   ))}
                 </select>
               </AssessmentField>
+              <AssessmentField id="charger_current_a" label="充电器输出电流（可选）">
+                <input id="charger_current_a" name="charger_current_a" type="number"
+                  min="0.1" max="100" step="0.1" placeholder="如 3，单位 A；不确定可留空" className={fieldClassName} />
+                <p className="text-xs text-muted-foreground">查看充电器铭牌的输出电流，有助于区分充电条件。</p>
+              </AssessmentField>
             </FormSection>
 
             <FormSection number="03" title="使用与环境">
+              <AssessmentField id="motor_power_w" label="车辆额定功率（可选）">
+                <input id="motor_power_w" name="motor_power_w" type="number"
+                  min="1" max="30000" step="1" placeholder="如 500，单位 W；不确定可留空" className={fieldClassName} />
+                <p className="text-xs text-muted-foreground">可查看车辆或电机铭牌；不填也可以评估。</p>
+              </AssessmentField>
               <AssessmentField id="driving_style" label="驾驶习惯">
                 <select id="driving_style" name="driving_style" defaultValue="normal" className={fieldClassName}>
                   <option value="gentle">温和</option>
@@ -461,18 +473,25 @@ function AssessmentResult({ result }: { result: PredictionResult | null }) {
           <Metric label="预计剩余" value={String(result.estimated_remaining_months) + " 个月"} />
           <Metric label="约合年数" value={String(result.estimated_remaining_years) + " 年"} />
           <Metric
-            label="单次 DOD"
+            label="单次充电区间"
             value={String(Math.round((result.mapped_features.single_charge_dod || 0) * 100)) + "%"}
           />
           <Metric
             label="年等效循环"
             value={String(Math.round(result.mapped_features.annual_equivalent_cycles || 0)) + " 次"}
           />
+          {result.estimated_remaining_cycles !== undefined ? (
+            <Metric label="估计剩余循环" value={Math.round(result.estimated_remaining_cycles) + " 次"} />
+          ) : null}
+          {result.remaining_life_method ? (
+            <Metric label="寿命依据" value={result.remaining_life_method === "trained_cycles" ? "循环模型估算" : "使用规则估算"} />
+          ) : null}
         </dl>
 
         <div className="rounded-md bg-secondary/50 p-3 text-xs leading-relaxed text-muted-foreground">
           {result.model_used ? `训练数据：${result.training_datasets.join(" + ")}。` : "使用习惯规则估算。"}
           {result.prediction_note}
+          {result.remaining_life_note ? <p className="mt-2">{result.remaining_life_note}</p> : null}
         </div>
 
         <InsightList

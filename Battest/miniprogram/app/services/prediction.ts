@@ -81,6 +81,18 @@ export function adaptPredictionResult(value: unknown): PredictionResult {
   if (typeof value.generated_at === "string") result.generated_at = value.generated_at;
   if (typeof value.battery_chemistry === "string") result.battery_chemistry = value.battery_chemistry;
   if (typeof value.prediction_note === "string") result.prediction_note = value.prediction_note;
+  if (value.estimated_remaining_cycles !== undefined) {
+    const cycles = numberField(value, "estimated_remaining_cycles");
+    if (cycles < 0) throw new PredictionServiceError("invalid_response", "剩余循环数超出有效范围。");
+    result.estimated_remaining_cycles = cycles;
+  }
+  if (value.remaining_life_method !== undefined) {
+    if (value.remaining_life_method !== "trained_cycles" && value.remaining_life_method !== "rules") {
+      throw new PredictionServiceError("invalid_response", "响应包含未知寿命估算方式。");
+    }
+    result.remaining_life_method = value.remaining_life_method;
+  }
+  if (typeof value.remaining_life_note === "string") result.remaining_life_note = value.remaining_life_note;
   if (value.training_datasets !== undefined) {
     result.training_datasets = stringArrayField(value, "training_datasets");
   }

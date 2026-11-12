@@ -6,16 +6,17 @@
 
 ```json
 {
-  "rows": 288912,
-  "cells": 273,
+  "rows": 330034,
+  "cells": 305,
   "min_cycle": 1,
-  "max_cycle": 2689,
+  "max_cycle": 4569,
   "soh_min": 0.2412621266365702,
-  "soh_max": 1.0246904754541066,
+  "soh_max": 1.0697155605131066,
   "files": {
-    "cycle_features": "D:\\code\\大创\\data\\processed\\cycle_features.csv",
-    "train": "D:\\code\\大创\\data\\processed\\train.csv",
-    "test": "D:\\code\\大创\\data\\processed\\test.csv"
+    "cycle_features.csv": "D:\\code\\大创\\data\\processed\\cycle_features.csv",
+    "train.csv": "D:\\code\\大创\\data\\processed\\train.csv",
+    "validation.csv": "D:\\code\\大创\\data\\processed\\validation.csv",
+    "test.csv": "D:\\code\\大创\\data\\processed\\test.csv"
   },
   "datasets": {
     "CALB": {
@@ -32,6 +33,16 @@
       "rows": 140001,
       "cells": 169,
       "missing_temperature_rows": 0
+    },
+    "SNL": {
+      "rows": 34184,
+      "cells": 9,
+      "missing_temperature_rows": 0
+    },
+    "XJTU": {
+      "rows": 6938,
+      "cells": 23,
+      "missing_temperature_rows": 6938
     }
   }
 }
@@ -55,6 +66,8 @@
 - `ambient_temperature_in_C`
 - `charge_time`
 - `discharge_time`
+- `charge_c_rate`
+- `discharge_c_rate`
 - `voltage_mean`
 - `voltage_std`
 - `voltage_min`
@@ -70,3 +83,9 @@
 - `current_abs_mean`
 - `current_abs_max`
 - `C_rate`
+- `context_temperature_c`
+- `split`
+- `cold_exposure`
+- `heat_exposure`
+- `charge_rate_known`
+- `discharge_rate_known`

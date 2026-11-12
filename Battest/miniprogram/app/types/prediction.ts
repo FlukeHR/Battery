@@ -15,6 +15,8 @@ export interface PredictionInput {
   long_term_storage: string;
   city: string;
   parking_environment: string;
+  charger_current_a?: number;
+  motor_power_w?: number;
 }
 
 export interface AssessmentDraft extends PredictionInput {
@@ -36,6 +38,9 @@ export interface PredictionResult {
   battery_chemistry?: string;
   training_datasets?: string[];
   prediction_note?: string;
+  estimated_remaining_cycles?: number;
+  remaining_life_method?: "trained_cycles" | "rules";
+  remaining_life_note?: string;
 }
 
 export interface StoredReport {

@@ -24,3 +24,4 @@ Battest/miniprogram/miniprogram_npm/
 Battest/miniprogram/project.private.config.json
 Battest/miniprogram/coverage/
 Battest/web/.test-build/
+Battest/web/.prediction-build/

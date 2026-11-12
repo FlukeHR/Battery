@@ -16,6 +16,8 @@ const predictionSchema = z
     long_term_storage: z.string().default("occasionally"),
     city: z.string().default("Chengdu"),
     parking_environment: z.string().default("indoor"),
+    charger_current_a: z.coerce.number().positive().max(100).optional(),
+    motor_power_w: z.coerce.number().positive().max(30000).optional(),
   })
   .refine((input) => input.charge_end_soc > input.charge_start_soc, {
     message: "充电结束电量必须高于开始充电时的电量。",
