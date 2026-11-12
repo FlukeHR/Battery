@@ -1,0 +1,1081 @@
+{
+  "candidates": [
+    {
+      "parameters": {
+        "n_estimators": 350,
+        "max_depth": 3,
+        "learning_rate": 0.035,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "objective": "reg:squarederror",
+        "random_state": 42,
+        "n_jobs": 4
+      },
+      "chemistries": {
+        "ncm": {
+          "soh": {
+            "mae": 0.019832637355423375,
+            "rmse": 0.02577607204193751,
+            "r2": 0.7577153722096731,
+            "cell_mae": 0.016005649822009353,
+            "dataset_mae": {
+              "CALB": 0.008208263804328016,
+              "XJTU": 0.02394167978422451
+            },
+            "rows": 1903,
+            "cells": 10
+          },
+          "lifetime": null,
+          "missing_soh": {
+            "mae": 0.021723708919016975,
+            "rmse": 0.02888839294580365,
+            "r2": 0.6956739338046642,
+            "cell_mae": 0.020053193719779074,
+            "dataset_mae": {
+              "CALB": 0.00974816093825125,
+              "XJTU": 0.025956886263569297
+            },
+            "rows": 1903,
+            "cells": 10
+          },
+          "missing_lifetime": null
+        },
+        "lfp": {
+          "soh": {
+            "mae": 0.02640228442594957,
+            "rmse": 0.03899971778455616,
+            "r2": 0.7040474505244763,
+            "cell_mae": 0.02808566445546761,
+            "dataset_mae": {
+              "HUST": 0.02546374705650526,
+              "MATR": 0.028217082523855873,
+              "SNL": 0.023451076207844153
+            },
+            "rows": 64850,
+            "cells": 51
+          },
+          "lifetime": {
+            "mae_cycles": 285.13100431617704,
+            "mape": 0.5488640790181633,
+            "cell_mape": 0.5864742807715109,
+            "dataset_mape": {
+              "HUST": 0.46091343816598535,
+              "MATR": 0.612950215816985,
+              "SNL": 0.7512939063309854
+            },
+            "rows": 2402,
+            "cells": 34
+          },
+          "missing_soh": {
+            "mae": 0.02962067008302484,
+            "rmse": 0.04503089475068248,
+            "r2": 0.6054334090224001,
+            "cell_mae": 0.030692478053672242,
+            "dataset_mae": {
+              "HUST": 0.028438623543264242,
+              "MATR": 0.031098215253688378,
+              "SNL": 0.028904927072811042
+            },
+            "rows": 64850,
+            "cells": 51
+          },
+          "missing_lifetime": {
+            "mae_cycles": 415.4705418774071,
+            "mape": 1.158172411173391,
+            "cell_mape": 1.2335861615558348,
+            "dataset_mape": {
+              "HUST": 0.5383102515779333,
+              "MATR": 1.7210409107476932,
+              "SNL": 0.6512286136300212
+            },
+            "rows": 2402,
+            "cells": 34
+          }
+        }
+      },
+      "selection_score": 4.2188963961821795
+    },
+    {
+      "parameters": {
+        "n_estimators": 350,
+        "max_depth": 4,
+        "learning_rate": 0.035,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "objective": "reg:squarederror",
+        "random_state": 42,
+        "n_jobs": 4
+      },
+      "chemistries": {
+        "ncm": {
+          "soh": {
+            "mae": 0.018586216042969478,
+            "rmse": 0.024592098733673056,
+            "r2": 0.7794619276858575,
+            "cell_mae": 0.014780499811898957,
+            "dataset_mae": {
+              "CALB": 0.007391661306185302,
+              "XJTU": 0.02254332394068053
+            },
+            "rows": 1903,
+            "cells": 10
+          },
+          "lifetime": null,
+          "missing_soh": {
+            "mae": 0.021583143977622822,
+            "rmse": 0.02935356176205981,
+            "r2": 0.6857943438043106,
+            "cell_mae": 0.019431922599168136,
+            "dataset_mae": {
+              "CALB": 0.00798434277574831,
+              "XJTU": 0.026390117090945457
+            },
+            "rows": 1903,
+            "cells": 10
+          },
+          "missing_lifetime": null
+        },
+        "lfp": {
+          "soh": {
+            "mae": 0.026023915853415125,
+            "rmse": 0.03902358897766215,
+            "r2": 0.7036850426417722,
+            "cell_mae": 0.02748898610753171,
+            "dataset_mae": {
+              "HUST": 0.02551505109358073,
+              "MATR": 0.026933450575381067,
+              "SNL": 0.024700217837295455
+            },
+            "rows": 64850,
+            "cells": 51
+          },
+          "lifetime": {
+            "mae_cycles": 262.92805283488656,
+            "mape": 0.5336939539887248,
+            "cell_mape": 0.5737682138684271,
+            "dataset_mape": {
+              "HUST": 0.44136526294755696,
+              "MATR": 0.6012624363993155,
+              "SNL": 0.7411188007153833
+            },
+            "rows": 2402,
+            "cells": 34
+          },
+          "missing_soh": {
+            "mae": 0.02982651437904226,
+            "rmse": 0.04523434133965125,
+            "r2": 0.6018601039813773,
+            "cell_mae": 0.030781788571324523,
+            "dataset_mae": {
+              "HUST": 0.029086989389251045,
+              "MATR": 0.03099275731558108,
+              "SNL": 0.028480559076415883
+            },
+            "rows": 64850,
+            "cells": 51
+          },
+          "missing_lifetime": {
+            "mae_cycles": 416.8840313186734,
+            "mape": 1.154722290029175,
+            "cell_mape": 1.2324156421353454,
+            "dataset_mape": {
+              "HUST": 0.5326116901772083,
+              "MATR": 1.716028496092197,
+              "SNL": 0.7086091879391222
+            },
+            "rows": 2402,
+            "cells": 34
+          }
+        }
+      },
+      "selection_score": 4.166346390296996
+    },
+    {
+      "parameters": {
+        "n_estimators": 350,
+        "max_depth": 5,
+        "learning_rate": 0.035,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "objective": "reg:squarederror",
+        "random_state": 42,
+        "n_jobs": 4
+      },
+      "chemistries": {
+        "ncm": {
+          "soh": {
+            "mae": 0.01863785877176964,
+            "rmse": 0.02467122025390013,
+            "r2": 0.7780405461234177,
+            "cell_mae": 0.014613862889894347,
+            "dataset_mae": {
+              "CALB": 0.006939092379738269,
+              "XJTU": 0.02277319795871103
+            },
+            "rows": 1903,
+            "cells": 10
+          },
+          "lifetime": null,
+          "missing_soh": {
+            "mae": 0.021767455523776975,
+            "rmse": 0.02989269187266803,
+            "r2": 0.6741464643327464,
+            "cell_mae": 0.019273400479052245,
+            "dataset_mae": {
+              "CALB": 0.007107517342241339,
+              "XJTU": 0.02694952471027997
+            },
+            "rows": 1903,
+            "cells": 10
+          },
+          "missing_lifetime": null
+        },
+        "lfp": {
+          "soh": {
+            "mae": 0.0259066674284717,
+            "rmse": 0.03892021247841941,
+            "r2": 0.7052528856052871,
+            "cell_mae": 0.02723771727536093,
+            "dataset_mae": {
+              "HUST": 0.026075068899887945,
+              "MATR": 0.026148430566020404,
+              "SNL": 0.02432901997824349
+            },
+            "rows": 64850,
+            "cells": 51
+          },
+          "lifetime": {
+            "mae_cycles": 259.10192513593785,
+            "mape": 0.5436746152490153,
+            "cell_mape": 0.5833675651725102,
+            "dataset_mape": {
+              "HUST": 0.4580991233658501,
+              "MATR": 0.6070179024807215,
+              "SNL": 0.723460512970624
+            },
+            "rows": 2402,
+            "cells": 34
+          },
+          "missing_soh": {
+            "mae": 0.03008142591347102,
+            "rmse": 0.04552295636971017,
+            "r2": 0.596763279746763,
+            "cell_mae": 0.030926503894423696,
+            "dataset_mae": {
+              "HUST": 0.02958014736649646,
+              "MATR": 0.031058587846110004,
+              "SNL": 0.028475950422885192
+            },
+            "rows": 64850,
+            "cells": 51
+          },
+          "missing_lifetime": {
+            "mae_cycles": 416.520590304988,
+            "mape": 1.1340381951630645,
+            "cell_mape": 1.2102224440212497,
+            "dataset_mape": {
+              "HUST": 0.5386551326558617,
+              "MATR": 1.6682517099623233,
+              "SNL": 0.7588662625810172
+            },
+            "rows": 2402,
+            "cells": 34
+          }
+        }
+      },
+      "selection_score": 4.13996023872374
+    },
+    {
+      "parameters": {
+        "n_estimators": 350,
+        "max_depth": 6,
+        "learning_rate": 0.035,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "objective": "reg:squarederror",
+        "random_state": 42,
+        "n_jobs": 4
+      },
+      "chemistries": {
+        "ncm": {
+          "soh": {
+            "mae": 0.018636121696933693,
+            "rmse": 0.024735593898832918,
+            "r2": 0.7768807348188491,
+            "cell_mae": 0.014565266866774586,
+            "dataset_mae": {
+              "CALB": 0.006797561090754673,
+              "XJTU": 0.022820876050611477
+            },
+            "rows": 1903,
+            "cells": 10
+          },
+          "lifetime": null,
+          "missing_soh": {
+            "mae": 0.021789001970734852,
+            "rmse": 0.02993818154644345,
+            "r2": 0.6731539642498596,
+            "cell_mae": 0.01922092524640489,
+            "dataset_mae": {
+              "CALB": 0.006901079428461653,
+              "XJTU": 0.027051660223586755
+            },
+            "rows": 1903,
+            "cells": 10
+          },
+          "missing_lifetime": null
+        },
+        "lfp": {
+          "soh": {
+            "mae": 0.02563466045993246,
+            "rmse": 0.03899863237723341,
+            "r2": 0.704063923699799,
+            "cell_mae": 0.026862135996763136,
+            "dataset_mae": {
+              "HUST": 0.026015006167486907,
+              "MATR": 0.025590808178946368,
+              "SNL": 0.024262176873693284
+            },
+            "rows": 64850,
+            "cells": 51
+          },
+          "lifetime": {
+            "mae_cycles": 254.28878990848676,
+            "mape": 0.5475263010745177,
+            "cell_mape": 0.5886082875600117,
+            "dataset_mape": {
+              "HUST": 0.46150637075002376,
+              "MATR": 0.611929762568311,
+              "SNL": 0.7155311774575047
+            },
+            "rows": 2402,
+            "cells": 34
+          },
+          "missing_soh": {
+            "mae": 0.03001391873500526,
+            "rmse": 0.045479517619237124,
+            "r2": 0.5975324627521932,
+            "cell_mae": 0.03088486325042333,
+            "dataset_mae": {
+              "HUST": 0.029490355887293134,
+              "MATR": 0.031044294879361743,
+              "SNL": 0.028300771188254782
+            },
+            "rows": 64850,
+            "cells": 51
+          },
+          "missing_lifetime": {
+            "mae_cycles": 416.15038816516727,
+            "mape": 1.1180415346562138,
+            "cell_mape": 1.191991068440064,
+            "dataset_mape": {
+              "HUST": 0.5505955813047854,
+              "MATR": 1.6266512491028124,
+              "SNL": 0.7698106350131375
+            },
+            "rows": 2402,
+            "cells": 34
+          }
+        }
+      },
+      "selection_score": 4.111830485338034
+    }
+  ],
+  "selected_parameters": {
+    "n_estimators": 350,
+    "max_depth": 6,
+    "learning_rate": 0.035,
+    "subsample": 0.85,
+    "colsample_bytree": 0.85,
+    "objective": "reg:squarederror",
+    "random_state": 42,
+    "n_jobs": 4
+  },
+  "selection_rule": "mean known/missing-info chemistry cell SOH MAE/0.02 + mean known/missing lifetime cell MAPE/0.30",
+  "split_seed": 20261112,
+  "models": {
+    "ncm": {
+      "model_version": 2,
+      "feature_columns": [
+        "cycle_position",
+        "DOD",
+        "DOC",
+        "cold_exposure",
+        "heat_exposure",
+        "charge_c_rate",
+        "discharge_c_rate",
+        "charge_rate_known",
+        "discharge_rate_known"
+      ],
+      "defaults": {
+        "cycle_position": 96.0,
+        "DOD": 1.0,
+        "DOC": 1.0,
+        "cold_exposure": 0.0,
+        "heat_exposure": 0.0,
+        "charge_c_rate": 3.0,
+        "discharge_c_rate": 1.0,
+        "charge_rate_known": 1.0,
+        "discharge_rate_known": 1.0
+      },
+      "metrics": {
+        "mae": 0.009688792082321054,
+        "rmse": 0.013784745309662606,
+        "r2": 0.9155233391330918
+      },
+      "battery_chemistry": "ncm",
+      "training_datasets": [
+        "CALB",
+        "XJTU"
+      ],
+      "train_rows": 5753,
+      "validation_rows": 1903,
+      "test_rows": 2073,
+      "train_cells": [
+        "CALB_0_B182",
+        "CALB_0_B183",
+        "CALB_0_B184",
+        "CALB_0_B187",
+        "CALB_0_B188",
+        "CALB_0_B189",
+        "CALB_25_T25-2",
+        "CALB_35_B173",
+        "CALB_35_B174",
+        "CALB_35_B227",
+        "CALB_35_B228",
+        "CALB_35_B229",
+        "CALB_35_B230",
+        "CALB_35_B247",
+        "CALB_35_B248",
+        "CALB_45_B255",
+        "CALB_45_B256",
+        "XJTU_2C_battery-1",
+        "XJTU_2C_battery-2",
+        "XJTU_2C_battery-3",
+        "XJTU_2C_battery-6",
+        "XJTU_3C_battery-1",
+        "XJTU_3C_battery-10",
+        "XJTU_3C_battery-11",
+        "XJTU_3C_battery-2",
+        "XJTU_3C_battery-3",
+        "XJTU_3C_battery-6",
+        "XJTU_3C_battery-7",
+        "XJTU_3C_battery-8",
+        "XJTU_3C_battery-9"
+      ],
+      "validation_cells": [
+        "CALB_0_B185",
+        "CALB_35_B224",
+        "CALB_35_B249",
+        "CALB_35_B250",
+        "CALB_45_B253",
+        "XJTU_2C_battery-5",
+        "XJTU_2C_battery-7",
+        "XJTU_3C_battery-12",
+        "XJTU_3C_battery-13",
+        "XJTU_3C_battery-15"
+      ],
+      "test_cells": [
+        "CALB_0_B190",
+        "CALB_25_T25-1",
+        "CALB_35_B175",
+        "CALB_35_B222",
+        "CALB_35_B223",
+        "XJTU_2C_battery-4",
+        "XJTU_2C_battery-8",
+        "XJTU_3C_battery-14",
+        "XJTU_3C_battery-4",
+        "XJTU_3C_battery-5"
+      ],
+      "parameters": {
+        "n_estimators": 350,
+        "max_depth": 6,
+        "learning_rate": 0.035,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "objective": "reg:squarederror",
+        "random_state": 42,
+        "n_jobs": 4
+      },
+      "imputation": "training median; 0 only for all-missing training columns",
+      "validation_metrics": {
+        "mae": 0.018636121696933693,
+        "rmse": 0.024735593898832918,
+        "r2": 0.7768807348188491,
+        "cell_mae": 0.014565266866774586,
+        "dataset_mae": {
+          "CALB": 0.006797561090754673,
+          "XJTU": 0.022820876050611477
+        },
+        "rows": 1903,
+        "cells": 10
+      },
+      "test_metrics": {
+        "mae": 0.009688792082321054,
+        "rmse": 0.013784745309662606,
+        "r2": 0.9155233391330918,
+        "cell_mae": 0.009531339495954558,
+        "dataset_mae": {
+          "CALB": 0.008233108035505383,
+          "XJTU": 0.010146635637946022
+        },
+        "rows": 2073,
+        "cells": 10
+      },
+      "validation_missing_info_metrics": {
+        "mae": 0.021789001970734852,
+        "rmse": 0.02993818154644345,
+        "r2": 0.6731539642498596,
+        "cell_mae": 0.01922092524640489,
+        "dataset_mae": {
+          "CALB": 0.006901079428461653,
+          "XJTU": 0.027051660223586755
+        },
+        "rows": 1903,
+        "cells": 10
+      },
+      "test_missing_info_metrics": {
+        "mae": 0.020368138891826988,
+        "rmse": 0.026810726019137757,
+        "r2": 0.6804370692622536,
+        "cell_mae": 0.017355413394259826,
+        "dataset_mae": {
+          "CALB": 0.0082362438902992,
+          "XJTU": 0.024183877586029766
+        },
+        "rows": 2073,
+        "cells": 10
+      },
+      "training_domain": {
+        "cycle_position": {
+          "min": 1.0,
+          "max": 407.0
+        },
+        "DOD": {
+          "min": 1.0,
+          "max": 1.0
+        },
+        "DOC": {
+          "min": 1.0,
+          "max": 1.0
+        },
+        "cold_exposure": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "heat_exposure": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "charge_c_rate": {
+          "min": 1.0,
+          "max": 5.0
+        },
+        "discharge_c_rate": {
+          "min": 1.0,
+          "max": 15.0
+        },
+        "charge_rate_known": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "discharge_rate_known": {
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "lifetime": {
+        "model_loaded": false,
+        "observed_training_cells": 1,
+        "minimum_training_cells": 10,
+        "training_datasets": [],
+        "defaults": {},
+        "output_transform": "expm1",
+        "validation_metrics": null,
+        "test_metrics": null,
+        "validation_missing_info_metrics": null,
+        "test_missing_info_metrics": null,
+        "censoring_note": "仅使用实际观测终点的电芯拟合精确剩余循环；未达终点不是寿命结束，存在事件条件选择偏差"
+      }
+    },
+    "lfp": {
+      "model_version": 2,
+      "feature_columns": [
+        "cycle_position",
+        "DOD",
+        "DOC",
+        "cold_exposure",
+        "heat_exposure",
+        "charge_c_rate",
+        "discharge_c_rate",
+        "charge_rate_known",
+        "discharge_rate_known"
+      ],
+      "defaults": {
+        "cycle_position": 657.0,
+        "DOD": 1.0,
+        "DOC": 1.0,
+        "cold_exposure": 0.0,
+        "heat_exposure": 0.0,
+        "charge_c_rate": 5.0,
+        "discharge_c_rate": 4.0,
+        "charge_rate_known": 1.0,
+        "discharge_rate_known": 1.0
+      },
+      "metrics": {
+        "mae": 0.022956289015053092,
+        "rmse": 0.039573410008733885,
+        "r2": 0.7344659914275877
+      },
+      "battery_chemistry": "lfp",
+      "training_datasets": [
+        "HUST",
+        "MATR",
+        "SNL"
+      ],
+      "train_rows": 192579,
+      "validation_rows": 64850,
+      "test_rows": 62876,
+      "train_cells": [
+        "HUST_1-1",
+        "HUST_1-3",
+        "HUST_1-8",
+        "HUST_10-1",
+        "HUST_10-2",
+        "HUST_10-3",
+        "HUST_10-5",
+        "HUST_10-8",
+        "HUST_2-3",
+        "HUST_2-5",
+        "HUST_3-2",
+        "HUST_3-3",
+        "HUST_3-4",
+        "HUST_3-5",
+        "HUST_3-8",
+        "HUST_4-1",
+        "HUST_4-2",
+        "HUST_4-4",
+        "HUST_4-5",
+        "HUST_4-6",
+        "HUST_4-7",
+        "HUST_5-2",
+        "HUST_5-5",
+        "HUST_5-6",
+        "HUST_5-7",
+        "HUST_6-1",
+        "HUST_6-3",
+        "HUST_6-4",
+        "HUST_6-5",
+        "HUST_6-6",
+        "HUST_6-8",
+        "HUST_7-1",
+        "HUST_7-2",
+        "HUST_7-3",
+        "HUST_7-4",
+        "HUST_7-6",
+        "HUST_7-8",
+        "HUST_8-1",
+        "HUST_8-3",
+        "HUST_8-5",
+        "HUST_8-6",
+        "HUST_8-7",
+        "HUST_8-8",
+        "HUST_9-2",
+        "HUST_9-4",
+        "HUST_9-7",
+        "HUST_9-8",
+        "MATR_b1c0",
+        "MATR_b1c11",
+        "MATR_b1c18",
+        "MATR_b1c19",
+        "MATR_b1c2",
+        "MATR_b1c20",
+        "MATR_b1c23",
+        "MATR_b1c26",
+        "MATR_b1c28",
+        "MATR_b1c3",
+        "MATR_b1c34",
+        "MATR_b1c35",
+        "MATR_b1c36",
+        "MATR_b1c37",
+        "MATR_b1c4",
+        "MATR_b1c40",
+        "MATR_b1c41",
+        "MATR_b1c42",
+        "MATR_b1c43",
+        "MATR_b1c44",
+        "MATR_b1c5",
+        "MATR_b1c7",
+        "MATR_b1c9",
+        "MATR_b2c0",
+        "MATR_b2c10",
+        "MATR_b2c17",
+        "MATR_b2c18",
+        "MATR_b2c19",
+        "MATR_b2c2",
+        "MATR_b2c21",
+        "MATR_b2c24",
+        "MATR_b2c26",
+        "MATR_b2c28",
+        "MATR_b2c32",
+        "MATR_b2c33",
+        "MATR_b2c34",
+        "MATR_b2c35",
+        "MATR_b2c38",
+        "MATR_b2c39",
+        "MATR_b2c4",
+        "MATR_b2c40",
+        "MATR_b2c41",
+        "MATR_b2c42",
+        "MATR_b2c44",
+        "MATR_b2c46",
+        "MATR_b2c47",
+        "MATR_b2c5",
+        "MATR_b3c10",
+        "MATR_b3c11",
+        "MATR_b3c12",
+        "MATR_b3c15",
+        "MATR_b3c18",
+        "MATR_b3c20",
+        "MATR_b3c22",
+        "MATR_b3c24",
+        "MATR_b3c26",
+        "MATR_b3c27",
+        "MATR_b3c28",
+        "MATR_b3c29",
+        "MATR_b3c3",
+        "MATR_b3c30",
+        "MATR_b3c31",
+        "MATR_b3c33",
+        "MATR_b3c34",
+        "MATR_b3c35",
+        "MATR_b3c38",
+        "MATR_b3c39",
+        "MATR_b3c4",
+        "MATR_b3c45",
+        "MATR_b3c5",
+        "MATR_b3c6",
+        "MATR_b3c8",
+        "MATR_b3c9",
+        "MATR_b4c0",
+        "MATR_b4c1",
+        "MATR_b4c11",
+        "MATR_b4c13",
+        "MATR_b4c14",
+        "MATR_b4c16",
+        "MATR_b4c17",
+        "MATR_b4c18",
+        "MATR_b4c19",
+        "MATR_b4c20",
+        "MATR_b4c22",
+        "MATR_b4c23",
+        "MATR_b4c24",
+        "MATR_b4c28",
+        "MATR_b4c29",
+        "MATR_b4c30",
+        "MATR_b4c31",
+        "MATR_b4c32",
+        "MATR_b4c35",
+        "MATR_b4c39",
+        "MATR_b4c4",
+        "MATR_b4c43",
+        "MATR_b4c44",
+        "MATR_b4c5",
+        "MATR_b4c6",
+        "MATR_b4c7",
+        "MATR_b4c8",
+        "MATR_b4c9",
+        "SNL_18650_LFP_25C_0-100_0.5-3C_a",
+        "SNL_18650_LFP_25C_0-100_0.5-3C_b",
+        "SNL_18650_LFP_35C_0-100_0.5-1C_b",
+        "SNL_18650_LFP_35C_0-100_0.5-1C_c",
+        "SNL_18650_LFP_35C_0-100_0.5-2C_b"
+      ],
+      "validation_cells": [
+        "HUST_1-2",
+        "HUST_1-5",
+        "HUST_1-7",
+        "HUST_10-4",
+        "HUST_2-4",
+        "HUST_3-6",
+        "HUST_3-7",
+        "HUST_4-3",
+        "HUST_5-3",
+        "HUST_5-4",
+        "HUST_7-5",
+        "HUST_7-7",
+        "HUST_8-4",
+        "HUST_9-3",
+        "HUST_9-5",
+        "MATR_b1c1",
+        "MATR_b1c15",
+        "MATR_b1c17",
+        "MATR_b1c21",
+        "MATR_b1c25",
+        "MATR_b1c27",
+        "MATR_b1c6",
+        "MATR_b2c1",
+        "MATR_b2c12",
+        "MATR_b2c14",
+        "MATR_b2c20",
+        "MATR_b2c23",
+        "MATR_b2c25",
+        "MATR_b2c27",
+        "MATR_b2c3",
+        "MATR_b2c43",
+        "MATR_b3c0",
+        "MATR_b3c13",
+        "MATR_b3c16",
+        "MATR_b3c17",
+        "MATR_b3c19",
+        "MATR_b3c21",
+        "MATR_b3c36",
+        "MATR_b3c40",
+        "MATR_b3c41",
+        "MATR_b4c12",
+        "MATR_b4c2",
+        "MATR_b4c21",
+        "MATR_b4c25",
+        "MATR_b4c3",
+        "MATR_b4c33",
+        "MATR_b4c37",
+        "MATR_b4c40",
+        "MATR_b4c42",
+        "SNL_18650_LFP_25C_0-100_0.5-3C_c",
+        "SNL_18650_LFP_35C_0-100_0.5-2C_a"
+      ],
+      "test_cells": [
+        "HUST_1-4",
+        "HUST_1-6",
+        "HUST_10-6",
+        "HUST_10-7",
+        "HUST_2-2",
+        "HUST_2-6",
+        "HUST_2-7",
+        "HUST_2-8",
+        "HUST_3-1",
+        "HUST_4-8",
+        "HUST_5-1",
+        "HUST_6-2",
+        "HUST_8-2",
+        "HUST_9-1",
+        "HUST_9-6",
+        "MATR_b1c14",
+        "MATR_b1c16",
+        "MATR_b1c24",
+        "MATR_b1c29",
+        "MATR_b1c30",
+        "MATR_b1c31",
+        "MATR_b1c32",
+        "MATR_b1c33",
+        "MATR_b1c38",
+        "MATR_b1c39",
+        "MATR_b1c45",
+        "MATR_b2c11",
+        "MATR_b2c13",
+        "MATR_b2c22",
+        "MATR_b2c29",
+        "MATR_b2c30",
+        "MATR_b2c31",
+        "MATR_b2c36",
+        "MATR_b2c37",
+        "MATR_b2c45",
+        "MATR_b2c6",
+        "MATR_b3c1",
+        "MATR_b3c14",
+        "MATR_b3c25",
+        "MATR_b3c44",
+        "MATR_b3c7",
+        "MATR_b4c10",
+        "MATR_b4c15",
+        "MATR_b4c26",
+        "MATR_b4c27",
+        "MATR_b4c34",
+        "MATR_b4c36",
+        "MATR_b4c38",
+        "MATR_b4c41",
+        "SNL_18650_LFP_25C_0-100_0.5-3C_d",
+        "SNL_18650_LFP_35C_0-100_0.5-1C_d"
+      ],
+      "parameters": {
+        "n_estimators": 350,
+        "max_depth": 6,
+        "learning_rate": 0.035,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "objective": "reg:squarederror",
+        "random_state": 42,
+        "n_jobs": 4
+      },
+      "imputation": "training median; 0 only for all-missing training columns",
+      "validation_metrics": {
+        "mae": 0.02563466045993246,
+        "rmse": 0.03899863237723341,
+        "r2": 0.704063923699799,
+        "cell_mae": 0.026862135996763136,
+        "dataset_mae": {
+          "HUST": 0.026015006167486907,
+          "MATR": 0.025590808178946368,
+          "SNL": 0.024262176873693284
+        },
+        "rows": 64850,
+        "cells": 51
+      },
+      "test_metrics": {
+        "mae": 0.022956289015053092,
+        "rmse": 0.039573410008733885,
+        "r2": 0.7344659914275877,
+        "cell_mae": 0.02440636236582116,
+        "dataset_mae": {
+          "HUST": 0.023612672859239205,
+          "MATR": 0.02578263996899731,
+          "SNL": 0.011045889272008209
+        },
+        "rows": 62876,
+        "cells": 51
+      },
+      "validation_missing_info_metrics": {
+        "mae": 0.03001391873500526,
+        "rmse": 0.045479517619237124,
+        "r2": 0.5975324627521932,
+        "cell_mae": 0.03088486325042333,
+        "dataset_mae": {
+          "HUST": 0.029490355887293134,
+          "MATR": 0.031044294879361743,
+          "SNL": 0.028300771188254782
+        },
+        "rows": 64850,
+        "cells": 51
+      },
+      "test_missing_info_metrics": {
+        "mae": 0.030915103253456352,
+        "rmse": 0.051532969922774396,
+        "r2": 0.5497190778440438,
+        "cell_mae": 0.031431492343515846,
+        "dataset_mae": {
+          "HUST": 0.030321989724809265,
+          "MATR": 0.033093124135764235,
+          "SNL": 0.02572371292288916
+        },
+        "rows": 62876,
+        "cells": 51
+      },
+      "training_domain": {
+        "cycle_position": {
+          "min": 1.0,
+          "max": 4569.0
+        },
+        "DOD": {
+          "min": 1.0,
+          "max": 1.0
+        },
+        "DOC": {
+          "min": 1.0,
+          "max": 1.0
+        },
+        "cold_exposure": {
+          "min": 0.0,
+          "max": 0.0
+        },
+        "heat_exposure": {
+          "min": 0.0,
+          "max": 0.0
+        },
+        "charge_c_rate": {
+          "min": 0.5,
+          "max": 8.0
+        },
+        "discharge_c_rate": {
+          "min": 1.0,
+          "max": 5.0
+        },
+        "charge_rate_known": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "discharge_rate_known": {
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "lifetime": {
+        "model_loaded": true,
+        "observed_training_cells": 102,
+        "minimum_training_cells": 10,
+        "training_datasets": [
+          "HUST",
+          "MATR",
+          "SNL"
+        ],
+        "defaults": {
+          "cycle_position": 453.0,
+          "DOD": 1.0,
+          "DOC": 1.0,
+          "cold_exposure": 0.0,
+          "heat_exposure": 0.0,
+          "charge_c_rate": 5.0,
+          "discharge_c_rate": 4.0,
+          "charge_rate_known": 1.0,
+          "discharge_rate_known": 1.0
+        },
+        "output_transform": "expm1",
+        "validation_metrics": {
+          "mae_cycles": 254.28878990848676,
+          "mape": 0.5475263010745177,
+          "cell_mape": 0.5886082875600117,
+          "dataset_mape": {
+            "HUST": 0.46150637075002376,
+            "MATR": 0.611929762568311,
+            "SNL": 0.7155311774575047
+          },
+          "rows": 2402,
+          "cells": 34
+        },
+        "test_metrics": {
+          "mae_cycles": 231.92887645728385,
+          "mape": 0.37806296961122937,
+          "cell_mape": 0.37798089289004483,
+          "dataset_mape": {
+            "HUST": 0.44000879510809404,
+            "MATR": 0.3393915901756989,
+            "SNL": 0.13615293082638213
+          },
+          "rows": 2429,
+          "cells": 34
+        },
+        "validation_missing_info_metrics": {
+          "mae_cycles": 416.15038816516727,
+          "mape": 1.1180415346562138,
+          "cell_mape": 1.191991068440064,
+          "dataset_mape": {
+            "HUST": 0.5505955813047854,
+            "MATR": 1.6266512491028124,
+            "SNL": 0.7698106350131375
+          },
+          "rows": 2402,
+          "cells": 34
+        },
+        "test_missing_info_metrics": {
+          "mae_cycles": 429.11065627112674,
+          "mape": 0.5067151551624034,
+          "cell_mape": 0.5055637851301353,
+          "dataset_mape": {
+            "HUST": 0.6787529090964457,
+            "MATR": 0.3456562729642997,
+            "SNL": 0.7873334184171942
+          },
+          "rows": 2429,
+          "cells": 34
+        },
+        "censoring_note": "仅使用实际观测终点的电芯拟合精确剩余循环；未达终点不是寿命结束，存在事件条件选择偏差",
+        "calibration_scales": {
+          "11": 0.758842894532146,
+          "00": 0.3791893309236786,
+          "10": 0.7479310390695595,
+          "01": 0.6041114534790717
+        },
+        "calibration_note": "按铭牌已知/未知四种组合，在验证集拟合乘法校准；未使用测试答案"
+      }
+    }
+  }
+}

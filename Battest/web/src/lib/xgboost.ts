@@ -9,18 +9,26 @@ interface Tree {
   split_conditions: number[];
 }
 
-export interface XGBoostModel {
-  battery_chemistry: string;
-  training_datasets: string[];
+export interface TreeModel {
   feature_columns: string[];
   defaults: Record<string, number>;
   base_score: number;
   trees: Tree[];
 }
 
+export interface XGBoostModel extends TreeModel {
+  battery_chemistry: string;
+  training_datasets: string[];
+  model_version?: number;
+  training_domain?: Record<string, { min: number; max: number }>;
+  lifetime?: TreeModel | null;
+  lifetime_training_datasets?: string[];
+  lifetime_calibration_scales?: Record<string, number>;
+}
+
 export const chemistryModels: Record<string, XGBoostModel | undefined> = { ncm, lfp };
 
-export function predictXGBoost(model: XGBoostModel, features: Record<string, number>): number {
+export function predictXGBoost(model: TreeModel, features: Record<string, number>): number {
   const values = model.feature_columns.map((key) => Math.fround(features[key]));
   let prediction = Math.fround(model.base_score);
   for (const tree of model.trees) {

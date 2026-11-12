@@ -14,7 +14,9 @@ def find_pickle_files(raw_dir: str | Path) -> list[Path]:
         raise FileNotFoundError(f"Raw data directory not found: {path}")
     files = sorted(path.glob("*.pkl"))
     if not files:
-        files = sorted(file for name in DATASET_CHEMISTRIES for file in (path / name).glob("*.pkl"))
+        roots = [path, path / "battery_life_test_SNL_LFP_XJTU" / "dataset"]
+        files = sorted({file for root in roots for name in DATASET_CHEMISTRIES
+                        for file in (root / name).glob("*.pkl")})
     if not files:
         raise FileNotFoundError(f"No .pkl files found in {path}")
     return files

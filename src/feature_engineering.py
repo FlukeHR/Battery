@@ -114,8 +114,34 @@ def _depth_fraction(value: Any) -> float:
 def _temperature_from_name(name: str) -> float | None:
     match = re.search(r"CALB_(-?\d+)", name)
     if not match:
+        match = re.search(r"SNL_.*_(-?\d+)C_", name)
+    if not match:
         return None
     return float(match.group(1))
+
+
+def protocol_rate(protocol: Any, nominal_capacity: float, peak: bool = False) -> float:
+    """按协议 SOC 区间计算平均倍率；充电器额定电流对应峰值倍率。"""
+    if not isinstance(protocol, list):
+        return np.nan
+    rates, weights = [], []
+    for stage in protocol:
+        if not isinstance(stage, dict):
+            continue
+        rate = _numeric_scalar(stage.get("rate_in_C"))
+        current = _numeric_scalar(stage.get("current_in_A"))
+        if rate is None and current is not None and nominal_capacity > 0:
+            rate = abs(current) / nominal_capacity
+        if rate is None or rate <= 0:
+            continue
+        start, end = _depth_fraction(stage.get("start_soc")), _depth_fraction(stage.get("end_soc"))
+        rates.append(rate)
+        weights.append(abs(end - start) if np.isfinite(start) and np.isfinite(end) else 0.0)
+    if not rates:
+        return np.nan
+    if peak:
+        return float(max(rates))
+    return float(np.average(rates, weights=weights)) if sum(weights) > 0 else float(np.mean(rates))
 
 
 def extract_cycle_features(
@@ -137,10 +163,12 @@ def extract_cycle_features(
     chemistry = DATASET_CHEMISTRIES.get(dataset, "unknown")
     material = str(cell_data.get("cathode_material") or "").lower()
     if material and chemistry != "unknown":
-        allowed = {"ncm": {"ncm", "nmc"}, "lfp": {"lfp", "lifepo4"}}
+        allowed = {"ncm": {"ncm", "nmc", "lini0.5co0.2mn0.3o2"}, "lfp": {"lfp", "lifepo4"}}
         if material not in allowed[chemistry]:
             raise ValueError(f"{source_file}: cathode {material!r} does not match {chemistry}")
     ambient_temp = _temperature_from_name(source_file or cell_data.get("cell_id", ""))
+    charge_rate = protocol_rate(cell_data.get("charge_protocol"), nominal_capacity, peak=True)
+    discharge_rate = protocol_rate(cell_data.get("discharge_protocol"), nominal_capacity)
     rows: list[dict[str, Any]] = []
 
     for position, cycle in enumerate(cycles, start=1):
@@ -170,6 +198,8 @@ def extract_cycle_features(
             "ambient_temperature_in_C": ambient_temp if ambient_temp is not None else np.nan,
             "charge_time": charge_time,
             "discharge_time": discharge_time,
+            "charge_c_rate": charge_rate,
+            "discharge_c_rate": discharge_rate,
         }
         row.update(_stats("voltage", _first_present(cycle, VOLTAGE_KEYS)))
         row.update(_stats("current", current_values))
@@ -187,6 +217,9 @@ def extract_cycle_features(
         row["current_abs_mean"] = float(np.mean(np.abs(current_arr))) if current_arr.size else np.nan
         row["current_abs_max"] = float(np.max(np.abs(current_arr))) if current_arr.size else np.nan
         row["C_rate"] = row["current_abs_mean"] / nominal_capacity if nominal_capacity else np.nan
+        row["context_temperature_c"] = (
+            row["ambient_temperature_in_C"] if ambient_temp is not None else row["temperature_mean"]
+        )
         rows.append(row)
 
     return rows

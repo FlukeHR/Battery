@@ -4,10 +4,6 @@ scipy
 matplotlib
 scikit-learn
 xgboost
-shap
 joblib
-torch
-tqdm
-pytest
-
-openpyxl
+reportlab
+PyMuPDF

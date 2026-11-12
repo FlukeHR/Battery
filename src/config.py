@@ -3,7 +3,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 RAW_DATA_DIR = PROJECT_ROOT / "dataset"
-DATASET_CHEMISTRIES = {"CALB": "ncm", "HUST": "lfp", "MATR": "lfp"}
+DATASET_CHEMISTRIES = {"CALB": "ncm", "HUST": "lfp", "MATR": "lfp", "SNL": "lfp", "XJTU": "ncm"}
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 REPORTS_DIR = PROJECT_ROOT / "data" / "reports"
 PLOTS_DIR = PROJECT_ROOT / "data" / "plots"

@@ -30,6 +30,14 @@
       <view class="metric-label">评估场景</view>
       <view class="metric-value">{{report.scenario_label}}</view>
     </view>
+    <view wx:if="{{report.result.remaining_life_method}}" class="metric">
+      <view class="metric-label">寿命依据</view>
+      <view class="metric-value">{{report.result.remaining_life_method === 'trained_cycles' ? '循环模型估算' : '使用规则估算'}}</view>
+    </view>
+    <view wx:if="{{report.result.remaining_life_method}}" class="metric">
+      <view class="metric-label">估计剩余循环</view>
+      <view class="metric-value">{{report.result.estimated_remaining_cycles}} 次</view>
+    </view>
   </view>
 
   <view class="insight-section">
@@ -54,6 +62,7 @@
       训练数据：<text wx:for="{{report.result.training_datasets}}" wx:key="*this">{{index > 0 ? '、' : ''}}{{item}}</text>
     </view>
     <view wx:if="{{report.result.prediction_note}}" class="basis-copy">{{report.result.prediction_note}}</view>
+    <view wx:if="{{report.result.remaining_life_note}}" class="basis-copy">{{report.result.remaining_life_note}}</view>
     <view class="basis-copy">
       {{report.battery_label}} · {{report.input.voltage}}V {{report.input.capacity_ah}}Ah · 已使用 {{report.input.battery_age_months}} 个月
     </view>

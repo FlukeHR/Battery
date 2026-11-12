@@ -17,7 +17,7 @@ export default function AssessmentPage() {
         <div className="absolute inset-0 bg-grid-soft opacity-35 [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]" />
         <div className="container relative py-14 sm:py-20">
           <Badge className="mb-4">
-            <Sparkles className="mr-1.5 h-3.5 w-3.5" /> CALB · HUST · MATR 研究数据
+            <Sparkles className="mr-1.5 h-3.5 w-3.5" /> CALB · HUST · MATR · SNL · XJTU
           </Badge>
           <h1 className="max-w-3xl text-balance text-3xl font-bold sm:text-5xl">
             在线评估你的<span className="text-primary">电池健康状态</span>

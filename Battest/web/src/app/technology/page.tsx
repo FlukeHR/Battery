@@ -15,7 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 export const metadata: Metadata = {
   title: "技术与方法 · 我们如何估算电池健康度",
   description:
-    "结合 CALB 三元锂、HUST 与 MATR 磷酸铁锂实验模型和使用习惯的电池健康评估方法。",
+    "结合 CALB、XJTU 三元锂与 HUST、MATR、SNL 磷酸铁锂数据，以及使用习惯的电池健康评估方法。",
 };
 
 export default function TechnologyPage() {
@@ -31,7 +31,7 @@ export default function TechnologyPage() {
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             在线版本根据电池类型选择对应 XGBoost 模型，结合使用习惯进行估算。
-            三元锂使用 CALB 数据，磷酸铁锂使用 HUST 与 MATR 数据；暂无对应模型的类型使用规则估算。
+            三元锂使用 CALB 与 XJTU 数据，磷酸铁锂使用 HUST、MATR 与 SNL 数据；SOH 和剩余寿命分别说明估算依据。
           </p>
         </div>
       </section>
@@ -80,11 +80,11 @@ export default function TechnologyPage() {
             <CardContent className="p-7">
               <div className="mb-4 inline-flex items-center gap-2 text-primary">
                 <Database className="h-5 w-5" />
-                <span className="text-sm font-medium">CALB · HUST · MATR 实验数据</span>
+                <span className="text-sm font-medium">CALB · HUST · MATR · SNL · XJTU</span>
               </div>
               <h3 className="text-lg font-semibold">真实充放电循环特征</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                使用充放电时间、温度、电压、电流、充放电深度与循环位置等特征训练模型，容量用于计算 SOH 标签。HUST 缺失温度时使用训练集默认值。
+                以循环位置、充电区间、温度暴露和充放电协议训练与使用信息对应的模型，放电容量只用于计算 SOH 答案。训练区分已知和未知铭牌信息，缺失值仅用训练集默认值补齐。
               </p>
             </CardContent>
           </Card>
@@ -115,14 +115,14 @@ export default function TechnologyPage() {
             {
               icon: GitBranch,
               tag: "离线基线",
-              title: "XGBoost 实验模型",
-              desc: "实验测试集上，三元锂 R² 为 0.866、MAE 为 0.0059；磷酸铁锂 R² 为 0.948、MAE 为 0.0094。这些指标不代表实际用车预测准确性。",
+              title: "V2 使用信息模型",
+              desc: "内部按电芯保留测试中，原生 SOH 平均误差约为三元锂0.97点、磷酸铁锂2.30点。网页还经过条件映射与规则融合，这些数字不代表实际车辆准确率。",
             },
             {
               icon: GitBranch,
-              tag: "未来",
-              title: "Transformer 序列模型",
-              desc: "在序列数据与真实车辆反馈充足后，进一步探索更精细的时序 SOH 与剩余寿命预测。",
+              tag: "寿命评估",
+              title: "独立剩余循环模型",
+              desc: "磷酸铁锂使用实测80%终点训练剩余循环，再按使用频率换算月数。三元锂终点样本不足，寿命仍为规则估算；真实车辆日历寿命尚未验证。",
             },
           ].map((s) => (
             <Card key={s.title}>
