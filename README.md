@@ -117,9 +117,13 @@ V2 训练器在完整训练、按电芯测试和报告生成后才安装到指�
 
 `GET /api/health` 返回两类模型的加载状态和训练来源。
 
+健康接口另以 `residual_model` 返回残值模型状态。官网已恢复历史的13个品牌标签、5类组装来源及挂牌价残值模型，模型说明见 [残值预测模型说明](data/reports/residual-model.md)。
+
 `POST /api/predict` 接收电池类型、电压、容量、使用月数、充电起止电量、每周充电次数、驾驶习惯、负载、存放习惯、城市和停放环境。参数字段保持现有 `snake_case`；无效 JSON 返回 400，无效参数返回 422。
 
 兼容增加可选 `charger_current_a`（充电器输出电流，A）与 `motor_power_w`（额定功率，W）。不填写仍可评估，但会说明默认条件与输入信息不足。
+
+残值输入均为可选：`brand`、`assembly_source`、`original_charger`、`new_battery_price`（元）、`full_charge_range_km`（km）和 `charge_cycles`。选择品牌时需提供组装来源；后三个数值可留空或为 `null`。只对三元锂、磷酸铁锂估价，响应中的 `residual_value` 包含可用状态、挂牌价估算、残值率、模型与误差说明；残值率仅在提供新电参考价时返回。不传残值信息的旧客户端仍正常返回健康与寿命评估。残值独立计算，不改变 SOH 和剩余寿命。
 
 响应保留 `soh`、`soh_percent`、`estimated_remaining_months`、`estimated_remaining_years`、`risk_level`、`main_degradation_factors`、`suggestions`、`mapped_features` 和 `model_used`，并补充：
 

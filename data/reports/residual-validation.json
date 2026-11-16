@@ -1,0 +1,44 @@
+{
+  "source_records": 150,
+  "training_records": 145,
+  "excluded_manganese": 5,
+  "brand_count": 13,
+  "validation": "5-fold grouped exact-input duplicates, seed 42; hyperparameter selection uses these folds, not independent test set",
+  "candidates": [
+    {
+      "alpha": 0.1,
+      "mae": 307.2518989699944,
+      "rmse": 444.72912256488775
+    },
+    {
+      "alpha": 1,
+      "mae": 297.3284351738531,
+      "rmse": 433.58300404988205
+    },
+    {
+      "alpha": 10,
+      "mae": 285.986859346537,
+      "rmse": 424.01564225752844
+    },
+    {
+      "alpha": 100,
+      "mae": 319.1717607625062,
+      "rmse": 480.77830980764793
+    }
+  ],
+  "selected": {
+    "alpha": 10,
+    "mae": 285.986859346537,
+    "rmse": 424.01564225752844
+  },
+  "baseline_median_mae": 417.21696551724136,
+  "empirical_80pct_absolute_error": 416.4959538508176,
+  "missing_counts": {
+    "电压": 0,
+    "容量": 0,
+    "新电参考价": 0,
+    "续航": 33,
+    "服役月数": 23,
+    "循环次数": 65
+  }
+}

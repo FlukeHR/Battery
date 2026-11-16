@@ -1,9 +1,16 @@
 import { chemistryModels, predictXGBoost } from "./xgboost";
 import type { XGBoostModel } from "./xgboost";
+import { predictResidualValue, type ResidualValueResult } from "./residual-value";
 
 export type RiskLevel = "low" | "medium" | "high";
 
 export interface PredictionInput {
+  brand?: string;
+  assembly_source?: string;
+  new_battery_price?: number | null;
+  full_charge_range_km?: number | null;
+  charge_cycles?: number | null;
+  original_charger?: string;
   battery_type: string;
   voltage: number;
   capacity_ah: number;
@@ -21,6 +28,7 @@ export interface PredictionInput {
 }
 
 export interface PredictionResult {
+  residual_value?: ResidualValueResult;
   soh: number;
   soh_percent: number;
   estimated_remaining_months: number;
@@ -387,7 +395,10 @@ export function predictFromUserInput(input: PredictionInput): PredictionResult {
   const features = estimateUserFeatures(input);
   const chemistry = batteryKey(input.battery_type);
   const model = chemistryModels[chemistry];
-  if (model?.model_version === 2) return predictUsageModel(features, chemistry, model);
+  const residualValue = predictResidualValue(input, chemistry);
+  if (model?.model_version === 2) {
+    return { ...predictUsageModel(features, chemistry, model), residual_value: residualValue };
+  }
   let soh = heuristicSoh(features);
   if (model) {
     const modelInput = {
@@ -410,6 +421,7 @@ export function predictFromUserInput(input: PredictionInput): PredictionResult {
   const months = remainingMonths(soh, features);
 
   return {
+    residual_value: residualValue,
     soh: roundTo(soh, 4),
     soh_percent: roundTo(soh * 100, 0),
     estimated_remaining_months: months,
